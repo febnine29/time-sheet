@@ -8,12 +8,9 @@ interface ProtectedProps{
 }
 export default function ProtectedRoute({isLogin , children}: ProtectedProps ) {
     
-    useEffect(() =>{
-       const redirectPath='/Login'
-    }, [])
     
     if(!isLogin){
-        return <Navigate to={redirectPath} replace />
+        return <Navigate to='/Login' replace />
     }
     console.log({children});
 

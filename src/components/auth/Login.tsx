@@ -24,7 +24,6 @@ export default function Login({setIsLogin}: LoginProps){
     const toggleShow = () => {
         setShowPassword(!showPassword) //mount and unmount
     }
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         request.post(`/api/TokenAuth/Authenticate`, {
@@ -36,6 +35,7 @@ export default function Login({setIsLogin}: LoginProps){
                 const token = response.data.result.accessToken
                 localStorage.setItem('accessToken', token)
                 console.log("token: ", response.data.result.accessToken);
+                
                 
                 return token
             })

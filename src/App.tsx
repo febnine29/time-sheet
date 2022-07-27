@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef,useLayoutEffect} from 'react';
 import {Routes, Route, Link} from 'react-router-dom';
 import axios from 'axios'
 import { request } from './api/baseUrl'
@@ -16,22 +16,18 @@ import setToken, { getToken} from './components/common/Common'
   rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
 />
-// const ProtectedRoute: FC = ({ children }) => {
-//   const { user } = useContext(ContextProvider); //Auth context
-//   return user?.id ? ( //Check if logged in
-//     <>
-//       {children} //This is your children
-//       <Outlet /> //This is your nested route
-//     </>
-//   ) : (
-//     <Navigate to="/login" replace /> //Go back to login if not logged in
-//   );
-// };
 
 function App() {
+  console.log('first load')
+ 
   const [isLogin, setIsLogin] = useState(false)
-  
-  useEffect(() => {
+  console.log('isLogin: ',isLogin)
+  const first = useRef(true)
+  useLayoutEffect(() => {
+    if(first.current){
+      first.current = false;
+      return
+    }
     const token = localStorage.getItem('accessToken');
     setToken(token)
     if(!token){
@@ -39,8 +35,6 @@ function App() {
     }
     request.get('/api/services/app/Session/GetCurrentLoginInformations')
     .then(response => {
-      console.log('response common:', axios.defaults.headers.common);
-      
       setIsLogin(true)
     })
     .catch(error => {
@@ -48,8 +42,6 @@ function App() {
       setToken(null)
     })
   }, [])
-  console.log('isLogin: ',isLogin)
-
 
   return (
     <div className="App">
