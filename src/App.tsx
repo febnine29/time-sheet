@@ -45,7 +45,8 @@ function App() {
       setAuthLoading(false);
     })
   }, [])
-  if (authLoading && getToken()) {
+
+  if (authLoading && getToken() && !isLogin) {
     return (
       <div className="content">Checking Authentication...</div>
     ) 

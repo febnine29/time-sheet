@@ -38,7 +38,6 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
                     <li><h1>You are logged in</h1> </li>
                     <li><Link to='/Home'>Go to home</Link></li>
                 </ul>
-                
             </div>
     }
     

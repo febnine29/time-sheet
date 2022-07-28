@@ -1,6 +1,10 @@
 import {Link} from 'react-router-dom'
+
+
 function Home(){
-    
+    const handleLogout = () => {
+        
+    }
     return(
         <div className="Home">
             <h1>Home</h1>
