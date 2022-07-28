@@ -2,8 +2,6 @@ import React, {useEffect, useState, useRef,useLayoutEffect} from 'react';
 import {Routes, Route, Link, Navigate} from 'react-router-dom';
 import axios from 'axios'
 import { request } from './api/baseUrl'
-// import logo from './logo.svg';
-// import { Counter } from './features/counter/Counter';
 import './App.css';
 import Login from './components/auth/Login';
 import Home from './pages/Home';
@@ -24,9 +22,6 @@ function App() {
   const [authLoading, setAuthLoading] = useState(true);
 
   console.log('isLogin: ',isLogin)
-  // if(isLogin){
-  //   <Navigate to={children} />
-  // }
   useLayoutEffect(() => {
     const token = localStorage.getItem('accessToken');
     setToken(token)
@@ -61,7 +56,7 @@ function App() {
         <Route path='Home'
           element={
             <ProtectedRoute isLogin={isLogin}> 
-              <Home />
+              <Home isLogin={isLogin} setIsLogin={setIsLogin}/>
             </ProtectedRoute> 
           }> 
         </Route>

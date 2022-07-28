@@ -14,10 +14,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
 import React, {useState, useEffect} from 'react';
 import { Navigate, useNavigate, Link } from "react-router-dom";
-import { LoginData } from '../../tscript/Auth'
 import { request } from '../../api/baseUrl'
-import { loginApi } from '../../api/authApi';
-import useAuth from '../../routes/ProtectedRoute';
 import '../../LoginStyle.css';
 import nccLogo from '../../images/nccsoft_vietnam_logo.png'
 interface LoginProps {
