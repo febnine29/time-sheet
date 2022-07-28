@@ -92,7 +92,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
                 <TextField
                     id="filled-basic"
                     type={showPassword ? "text" : "Password"}
-                    label="password"
+                    label="Password"
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <br/>

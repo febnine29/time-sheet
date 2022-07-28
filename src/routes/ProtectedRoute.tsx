@@ -10,7 +10,7 @@ export default function ProtectedRoute({isLogin , children}: ProtectedProps ) {
     const navigate = useNavigate()
   
     if(!isLogin){
-        return <Navigate to='/Login' replace />
+        return <Navigate to='/' replace />
     }
     console.log({children});
 

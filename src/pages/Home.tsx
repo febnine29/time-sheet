@@ -8,14 +8,13 @@ interface LogoutProps{
 }
 function Home({setIsLogin, isLogin}:LogoutProps){
     
-    const [refresh, setRefresh] = useState(false);
     const navigate = useNavigate()
     
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         setIsLogin(false)
         if(!isLogin){
-            return navigate('/Login')
+            return navigate('/')
         }
         console.log('isLogin home: ', isLogin)
     }

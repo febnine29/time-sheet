@@ -52,7 +52,7 @@ function App() {
       
      
       <Routes>
-        <Route path='/Login' element={<Login setIsLogin={setIsLogin} isLogin={isLogin} />}></Route>
+        <Route path='/' element={<Login setIsLogin={setIsLogin} isLogin={isLogin} />}></Route>
         <Route path='Home'
           element={
             <ProtectedRoute isLogin={isLogin}> 
