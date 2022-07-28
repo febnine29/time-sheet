@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  font-family: 'Roboto', sans-serif;
+  
 }
 
 .App-logo {
@@ -21,6 +23,17 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
 }
+.visibleIcon{
+  border: none;
+  background: none;
+  transition: .3s ease-in-out;
+  outline: none;
+}
+.visibleIcon:hover:enabled{
+  cursor: pointer;
+  color: red;
+  transition: .3s ease-in-out;
+}
 
 .App-link {
   color: rgb(112, 76, 182);
@@ -40,15 +53,3 @@
 
 
 /* css unique */
-.visibleIcon{
-  border: none;
-  background: none;
-  transition: .3s ease-in-out;
-  outline: none;
-}
-.visibleIcon:hover:enabled{
-  cursor: pointer;
-  color: red;
-  transition: .3s ease-in-out;
-  
-}

@@ -1,18 +1,30 @@
-
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import {
+    VisibilityOff,
+    Visibility,
+} from '@mui/icons-material';
+import TextField from '@mui/material/TextField';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import FilledInput from '@mui/material/FilledInput';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import FormHelperText from '@mui/material/FormHelperText';
+import FormControl from '@mui/material/FormControl';
 import React, {useState, useEffect} from 'react';
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { LoginData } from '../../tscript/Auth'
 import { request } from '../../api/baseUrl'
 import { loginApi } from '../../api/authApi';
-import useAuth from '../../routes/ProtectedRoute'
+import useAuth from '../../routes/ProtectedRoute';
+import '../../LoginStyle.css';
+import nccLogo from '../../images/nccsoft_vietnam_logo.png'
 interface LoginProps {
     setIsLogin: (agr :boolean) => void,
-    
+    isLogin: boolean,
 }
-export default function Login({setIsLogin}: LoginProps){
+export default function Login({setIsLogin, isLogin}: LoginProps){
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -20,7 +32,16 @@ export default function Login({setIsLogin}: LoginProps){
     const [showPassword, setShowPassword] = useState(false)
     const [token, setToken] = useState('')
     const navigate = useNavigate()
-
+    if(isLogin) {
+        return <div>
+                <ul>
+                    <li><h1>You are logged in</h1> </li>
+                    <li><Link to='/Home'>Go to home</Link></li>
+                </ul>
+                
+            </div>
+    }
+    
     const toggleShow = () => {
         setShowPassword(!showPassword) //mount and unmount
     }
@@ -34,20 +55,16 @@ export default function Login({setIsLogin}: LoginProps){
         .then (response => {
                 const token = response.data.result.accessToken
                 localStorage.setItem('accessToken', token)
-                console.log("token: ", response.data.result.accessToken);
-                
-                
                 return token
             })
         .then(res => {
             if(res){
                 setIsLogin(true);
-                navigate("/Profile")
+                navigate("/Home")
             }
         })   
         .catch(error => {
             if(error.response.data.error.code === 0 ){
-                console.log(error.response.data.error.details);
                 setError(error.response.data.error.details);
             }
             else{
@@ -61,22 +78,29 @@ export default function Login({setIsLogin}: LoginProps){
     
     return(
         <div className='Login'>
+            <div className="logo">
+                <a><img src={nccLogo}></img></a>
+                
+            </div>
+            <h1>TimeSheet</h1>
             <form onSubmit={handleSubmit}>
-                <span>Username or email address</span> <br/>
-                <input 
+                <TextField
+                    id="outlined-basic"
+                    label="UserName or Email"
+                    autoComplete="current-password"
                     type="text" 
-                    name="userNameOrEmailAddress"
                     onChange={(e) => setEmail(e.target.value)}
+                    
                 /><br />
-                <span> Password </span><br/>
-                <input
+                
+                <TextField
+                    id="filled-basic"
                     type={showPassword ? "text" : "Password"}
-                    name="password"
+                    label="password"
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                
                 <br/>
-                <button type='submit'> Login </button><br />    
+                <button className="submitBtn" type='submit'> Login </button><br />    
                 <span style={{color: "red"}}>{error}</span>
             </form>
             <button  
