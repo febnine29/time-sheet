@@ -1,32 +1,16 @@
 import {useState} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import { isReturnStatement } from 'typescript';
-
+import ResponsiveAppBar from './Home-Nav'
 interface LogoutProps{
     setIsLogin: (agr :boolean) => void,
     isLogin: boolean
 }
 function Home({setIsLogin, isLogin}:LogoutProps){
-    
-    const navigate = useNavigate()
-    
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        setIsLogin(false)
-        if(!isLogin){
-            return navigate('/')
-        }
-        console.log('isLogin home: ', isLogin)
-    }
     return(
         <div className="Home">
-            <h1>Home</h1>
-            <ul>
-                <li><Link to='/Login'>Login</Link></li>
-                <li><Link to='/Home'>Home</Link></li>
-                <li><Link to='/Dashboard'>Dashboard</Link></li>
-                <button className='logOutBtn' onClick={handleLogout}>Log out</button>
-            </ul>
+            <ResponsiveAppBar isLogin={isLogin} setIsLogin={setIsLogin}/>
+            
         </div>
     )
 }

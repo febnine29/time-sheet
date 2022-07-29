@@ -1,21 +1,9 @@
-import {
-    VisibilityOff,
-    Visibility,
-} from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Input from '@mui/material/Input';
-import FilledInput from '@mui/material/FilledInput';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import FormControl from '@mui/material/FormControl';
+
 import React, {useState, useEffect} from 'react';
 import { Navigate, useNavigate, Link } from "react-router-dom";
 import { request } from '../../api/baseUrl'
-import '../../LoginStyle.css';
+import '../../css/LoginStyle.css';
 import nccLogo from '../../images/nccsoft_vietnam_logo.png'
 interface LoginProps {
     setIsLogin: (agr :boolean) => void,
@@ -73,6 +61,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
     
     
     return(
+        
         <div className='Login'>
             <div className="logo">
                 <a><img src={nccLogo}></img></a>

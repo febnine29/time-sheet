@@ -6,6 +6,7 @@ import './App.css';
 import Login from './components/auth/Login';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import TestPage from './pages/TestPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import useToken from './components/auth/useToken'
 import { LoginData } from './tscript/Auth';
@@ -67,6 +68,7 @@ function App() {
             </ProtectedRoute> 
           }> 
         </Route>
+        <Route path='/TestPage' element={<TestPage isLogin={isLogin} setIsLogin={setIsLogin}/>}></Route>
       </Routes>
      
     </div>
