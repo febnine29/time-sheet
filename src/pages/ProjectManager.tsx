@@ -5,7 +5,6 @@ interface LogoutProps{
     isLogin: boolean
 }
 function ProjectManager({isLogin, setIsLogin}: LogoutProps){
-    console.log('test ProjectManager page')
     return (
         <div className="ProjectManager">
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>

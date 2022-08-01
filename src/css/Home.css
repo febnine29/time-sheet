@@ -36,3 +36,8 @@ body{
     text-decoration: none !important;
     color: white
 }
+#root .App .main-body{
+    width: min(100% - 2rem);
+    height: 100%;
+    margin: auto;
+}

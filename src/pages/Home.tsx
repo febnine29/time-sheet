@@ -13,7 +13,8 @@ function Home({setIsLogin, isLogin}:LogoutProps){
     return(
         <div className="Home">
             <ResponsiveAppBar isLogin={isLogin} setIsLogin={setIsLogin}/>
-            
+
+            <h1>Home</h1>
         </div>
     )
 }

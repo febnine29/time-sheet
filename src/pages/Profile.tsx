@@ -5,10 +5,10 @@ interface LogoutProps{
     isLogin: boolean
 }
 function Profile({isLogin, setIsLogin}: LogoutProps){
-    console.log('test profile page')
     return (
         <div className="Profile">
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
+            
             <h1>Profile</h1>
         </div>
     )

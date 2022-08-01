@@ -20,16 +20,13 @@ import setToken, { getToken} from './components/common/Common'
 />
 
 function App() {
-  console.log('first load')
   
   const [isLogin, setIsLogin] = useState(false)
   const [authLoading, setAuthLoading] = useState(true);
 
-  console.log('isLogin: ',isLogin)
   useLayoutEffect(() => {
     const token = localStorage.getItem('accessToken');
     setToken(token)
-    console.log('settoken', setToken(token))
     if(!token){
       return
     }
