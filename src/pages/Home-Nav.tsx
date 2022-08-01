@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Routes, Route, Link, useNavigate} from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -13,13 +13,16 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Profile from './Profile'
 import '../css/Home.css';
-import ava from '../images/bae.jpeg'
+import ava from '../images/bae.jpeg';
+import nccLogo from '../images/nccsoft_vietnam_logo.png'
 interface LogoutProps {
     setIsLogin: (agr :boolean) => void,
     isLogin: boolean,
 }
 const pages = ['Profile', 'Task Manager', 'Project Manager'];
+
 const settings = ['Logout'];
 
 function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
@@ -53,7 +56,7 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
     <AppBar className="mainNav" position="static">
       <Container  maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Avatar className="ava-logo" sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} src={nccLogo}/>
           <Typography
             variant="h6"
             noWrap
@@ -101,14 +104,21 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {/* {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
-              ))}
+              ))} */}
+                <MenuItem  onClick={handleCloseNavMenu}>
+                  <Typography textAlign="left" sx={{display: 'flex', flexDirection: 'column'}}>
+                    <Button><Link className='alink' to='/Home/Profile'>Profile</Link></Button> 
+                    <Button><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
+                    <Button><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
+                  </Typography>
+                </MenuItem>
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Avatar className="ava-logo" sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} src={nccLogo}/>
           <Typography
             variant="h5"
             noWrap
@@ -127,26 +137,28 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
           >
             TIMESHEET
           </Typography>
+          {/* ----button when not responsive----- */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            
             <div style={{margin: 'auto', display: 'flex', flexDirection: 'row'}}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{  my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-              
-            ))}
+            {/* {pages.map((page) => (
+                <Button
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                  sx={{  my: 2, color: 'white', display: 'block' }}
+                >
+                  {page}
+                </Button>
+            ))} */}
+            <Button><Link className='alink' to='/Home/Profile'>Profile</Link></Button> 
+            <Button><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
+            <Button><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
             </div>
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar src={ava} />
+                <Avatar className="ava-right" src={ava} />
               </IconButton>
             </Tooltip>
             <Menu

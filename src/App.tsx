@@ -6,6 +6,9 @@ import './App.css';
 import Login from './components/auth/Login';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import ProjectManager from './pages/ProjectManager';
+import TaskManager from './pages/TaskManager';
 import TestPage from './pages/TestPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import useToken from './components/auth/useToken'
@@ -58,9 +61,38 @@ function App() {
           element={
             <ProtectedRoute isLogin={isLogin}> 
               <Home isLogin={isLogin} setIsLogin={setIsLogin}/>
+              
             </ProtectedRoute> 
           }> 
+          
         </Route>
+        <Route 
+          path='Home/Profile' 
+          element={
+            <ProtectedRoute isLogin={isLogin}>
+              
+              <Profile isLogin={isLogin} setIsLogin={setIsLogin}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path='Home/TaskManager' 
+          element={
+            <ProtectedRoute isLogin={isLogin}>
+              
+              <TaskManager isLogin={isLogin} setIsLogin={setIsLogin}/>
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path='Home/ProjectManager' 
+          element={
+            <ProtectedRoute isLogin={isLogin}>
+              
+              <ProjectManager isLogin={isLogin} setIsLogin={setIsLogin}/>
+            </ProtectedRoute>
+          }
+        />
         <Route path='Dashboard'
           element={
             <ProtectedRoute isLogin={isLogin}> 
