@@ -1,5 +1,4 @@
 body{
-    background: #ecf0f3;
     font-family: 'Roboto', sans-serif;
 }
 /* --------HOME NAVBAR CSS--------- */
@@ -9,7 +8,7 @@ body{
     box-shadow: 13px 13px 20px #7f7f7f,
     -13px -13px 20px #fff;
     width: min(100% - 2rem);
-    margin: 10px auto
+    margin: 10px auto 20px auto;
 }
 #root .App .MuiPaper-root .MuiBox-root .MuiButton-root{
     color: rgb(255, 219, 219);
@@ -40,4 +39,51 @@ body{
     width: min(100% - 2rem);
     height: 100%;
     margin: auto;
+    background:rgb(238, 238, 238);
+    border-radius: 20px;
+    box-shadow: rgb(0 0 0 / 0%) 0px 14px 28px, rgb(0 0 0 / 22%) 6px 10px 10px;
 }
+#root .Home .homeBtn span{
+    border-radius: 0px;
+}
+#root .Home .homeBtn span:after{
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+#root .ProjectManager .projectBtn span{
+    border-radius: 0px;
+}
+#root .ProjectManager .projectBtn span:after{
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+#root .TaskManager .taskBtn span{
+    border-radius: 0px;
+}
+#root .TaskManager .taskBtn span:after{
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+/* #root .TaskManager ul li button{
+    padding: 5px 10px;
+    border-radius: 10px;
+    cursor: pointer
+}
+#root .TaskManager ul li .archiveTaskBtn{
+    margin: 0px 5px
+} */

@@ -8,7 +8,10 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
     return (
         <div className="ProjectManager">
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
-            <h1>Project Manager</h1>
+            <div className='main-body main-project'>
+                
+                <h1>Project Manager</h1>
+            </div>
         </div>
     )
 }

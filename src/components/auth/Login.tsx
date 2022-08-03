@@ -18,12 +18,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
     const [token, setToken] = useState('')
     const navigate = useNavigate()
     if(isLogin) {
-        return <div>
-                <ul>
-                    <li><h1>You are logged in</h1> </li>
-                    <li><Link to='/Home'>Go to home</Link></li>
-                </ul>
-            </div>
+        return <Navigate to='/Home'/>
     }
     
     const toggleShow = () => {

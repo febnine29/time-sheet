@@ -13,12 +13,15 @@ import TestPage from './pages/TestPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import useToken from './components/auth/useToken'
 import { LoginData } from './tscript/Auth';
-import setToken, { getToken} from './components/common/Common'
+import setToken, { getToken} from './components/common/Common';
+import {dataTaskForm} from './tscript/Task'
 <link
   rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
 />
-
+// interface appProps{
+//   titles: dataTaskForm[] | null;
+// }
 function App() {
   
   const [isLogin, setIsLogin] = useState(false)
@@ -50,8 +53,6 @@ function App() {
 
   return (
     <div className="App">
-      
-     
       <Routes>
         <Route path='/' element={<Login setIsLogin={setIsLogin} isLogin={isLogin} />}></Route>
         <Route path='Home'

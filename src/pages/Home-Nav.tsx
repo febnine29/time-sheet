@@ -21,7 +21,7 @@ interface LogoutProps {
     setIsLogin: (agr :boolean) => void,
     isLogin: boolean,
 }
-const pages = ['Profile', 'Task Manager', 'Project Manager'];
+const pages = ['Home', 'Task Manager', 'Project Manager'];
 
 const settings = ['Logout'];
 
@@ -111,7 +111,7 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
               ))} */}
                 <MenuItem  onClick={handleCloseNavMenu}>
                   <Typography textAlign="left" sx={{display: 'flex', flexDirection: 'column'}}>
-                    <Button><Link className='alink' to='/Home/Profile'>Profile</Link></Button> 
+                    <Button><Link className='alink' to='/Home'>Home</Link></Button> 
                     <Button><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
                     <Button><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
                   </Typography>
@@ -149,9 +149,9 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
                   {page}
                 </Button>
             ))} */}
-            <Button><Link className='alink' to='/Home/Profile'>Profile</Link></Button> 
-            <Button><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
-            <Button><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
+            <Button className='homeBtn'><Link className='alink' to='/Home'>Home</Link></Button> 
+            <Button className='taskBtn'><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
+            <Button className='projectBtn'><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
             </div>
           </Box>
 

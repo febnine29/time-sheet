@@ -12,7 +12,6 @@ export default function ProtectedRoute({isLogin , children}: ProtectedProps ) {
     if(!isLogin){
         return <Navigate to='/' replace />
     }
-    console.log({children});
 
     return children 
 
