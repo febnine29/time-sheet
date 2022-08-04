@@ -39,6 +39,7 @@ body{
     width: min(100% - 2rem);
     height: 100%;
     margin: auto;
+    padding: 20px;
     background:rgb(238, 238, 238);
     border-radius: 20px;
     box-shadow: rgb(0 0 0 / 0%) 0px 14px 28px, rgb(0 0 0 / 22%) 6px 10px 10px;
@@ -79,11 +80,20 @@ body{
     bottom: 0;
     left: 0;
 }
-/* #root .TaskManager ul li button{
-    padding: 5px 10px;
-    border-radius: 10px;
-    cursor: pointer
+#root .TaskManager .main-task ul li{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0px;
 }
-#root .TaskManager ul li .archiveTaskBtn{
-    margin: 0px 5px
-} */
+#root .TaskManager .main-task .MuiGrid-root .otherTasks,
+#root .TaskManager .main-task .MuiGrid-root .commonTasks{
+    background: white !important;
+    box-shadow: none;
+    max-height: 50vw;
+    overflow-y: scroll;
+}
+
+#root .TaskManager .main-task .overflowTitle{
+    overflow-x: hidden;
+}

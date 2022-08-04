@@ -1,8 +1,10 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import { getAllTask } from '../../tscript/Task';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -18,16 +20,36 @@ import {dataTaskForm} from '../../tscript/Task'
 
 export default function NewTask() {
     const [open, setOpen] = React.useState(false);
-    const [age, setAge] = React.useState<number | string>('');
     const [dataNewTask, setDataNewTask] = useState<Partial<dataTaskForm>>({
+        // name: "test",
+        // type: 0,
+        // isDeleted: false,
         name: "",
         type: 0,
-        isDeleted: false,
+        isDeleted: false
     })
+    
+    const handleSubmitTask = (event: React.SyntheticEvent<unknown>, reason?: string) => {
+       
+            getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
+            .then(response =>{
+                console.log('saved success', response);
+                
+            })
+            if (reason !== 'backdropClick') {
+                setOpen(false);
+            }
 
-    // const handleChange = (event: SelectChangeEvent<typeof age>) => {
-    //     setAge(Number(event.target.value) || '');
-    // };
+    }
+    
+    console.log('newtask', dataNewTask)
+    // const handleDelTask = (id:any) => {
+    //         getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
+    //         const del = [...title];
+    //         del.splice(id, 1);
+    //         setTitle(del) 
+            
+    // }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -43,13 +65,14 @@ export default function NewTask() {
         <div>
         <Button onClick={handleClickOpen}>Open select dialog</Button>
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+
             <DialogTitle>Fill the form</DialogTitle>
             <DialogContent>
             <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-            
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="demo-dialog-select-label">Age</InputLabel>
-                    <Input
+                    
+                    <TextField
+                        autoFocus
                         name="name"
                         value={dataNewTask.name}
                         onChange={(e) =>
@@ -58,19 +81,17 @@ export default function NewTask() {
                             [e.target.name]: e.target.value,
                         })
                         }
-                        style={{marginTop: '10px'}}
                     />
                     <Select
                         labelId="demo-dialog-select-label"
                         id="demo-dialog-select"
-                        value={age}
+                        value={dataNewTask}
                         onChange={(e) => {
-                            setDataNewTask({ ...dataNewTask, type: +e.target.value })
+                            setDataNewTask({...dataNewTask,type: +e.target.value})
                         }}
-                        input={<OutlinedInput label="Age" />}
                     >
-                        <MenuItem selected={dataNewTask?.type! === 0} value={0}>Common Task</MenuItem>
-                        <MenuItem selected={dataNewTask?.type! === 1} value={1}>Other Task</MenuItem>
+                        <MenuItem  value={0}>0</MenuItem>
+                        <MenuItem  value={1}>1</MenuItem>
                         
                     </Select>
                 </FormControl>
@@ -78,8 +99,9 @@ export default function NewTask() {
             </DialogContent>
             <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Ok</Button>
+            <Button onClick={handleSubmitTask}>Ok</Button>
             </DialogActions>
+           
         </Dialog>
         </div>
     );
