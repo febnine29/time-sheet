@@ -21,9 +21,6 @@ import {dataTaskForm} from '../../tscript/Task'
 export default function NewTask() {
     const [open, setOpen] = React.useState(false);
     const [dataNewTask, setDataNewTask] = useState<Partial<dataTaskForm>>({
-        // name: "test",
-        // type: 0,
-        // isDeleted: false,
         name: "",
         type: 0,
         isDeleted: false
@@ -39,7 +36,6 @@ export default function NewTask() {
             if (reason !== 'backdropClick') {
                 setOpen(false);
             }
-
     }
     
     console.log('newtask', dataNewTask)
@@ -63,16 +59,18 @@ export default function NewTask() {
 
     return (
         <div>
-        <Button onClick={handleClickOpen}>Open select dialog</Button>
+        <Button onClick={handleClickOpen} variant='outlined'>Open select dialog</Button>
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
 
-            <DialogTitle>Fill the form</DialogTitle>
+            <DialogTitle>Add new task</DialogTitle>
             <DialogContent>
             <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
                     
                     <TextField
                         autoFocus
+                        variant='outlined'
+                        label='Input task name'
                         name="name"
                         value={dataNewTask.name}
                         onChange={(e) =>
@@ -84,6 +82,7 @@ export default function NewTask() {
                     />
                     <Select
                         labelId="demo-dialog-select-label"
+                        label="Task type"
                         id="demo-dialog-select"
                         value={dataNewTask}
                         onChange={(e) => {
@@ -99,7 +98,7 @@ export default function NewTask() {
             </DialogContent>
             <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleSubmitTask}>Ok</Button>
+            <Button onClick={handleSubmitTask}>Add</Button>
             </DialogActions>
            
         </Dialog>
