@@ -23,29 +23,21 @@ export default function NewTask() {
     const [dataNewTask, setDataNewTask] = useState<Partial<dataTaskForm>>({
         name: "",
         type: 0,
-        isDeleted: false
+        isDeleted: true
     })
-    
+    const [reload, setReload] = useState([])
     const handleSubmitTask = (event: React.SyntheticEvent<unknown>, reason?: string) => {
-       
             getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
             .then(response =>{
-                console.log('saved success', response);
-                
+                console.log('add success', response);
+                setReload(response.data)
+                console.log(reload)
             })
             if (reason !== 'backdropClick') {
                 setOpen(false);
             }
     }
     
-    console.log('newtask', dataNewTask)
-    // const handleDelTask = (id:any) => {
-    //         getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
-    //         const del = [...title];
-    //         del.splice(id, 1);
-    //         setTitle(del) 
-            
-    // }
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -80,17 +72,16 @@ export default function NewTask() {
                         })
                         }
                     />
+                    <span style={{textAlign: 'left', margin: '15px 0px 10px 0px'}}>Select task type</span>
                     <Select
-                        labelId="demo-dialog-select-label"
-                        label="Task type"
-                        id="demo-dialog-select"
-                        value={dataNewTask}
+                        autoWidth
+                        value={dataNewTask.type}
                         onChange={(e) => {
                             setDataNewTask({...dataNewTask,type: +e.target.value})
                         }}
                     >
-                        <MenuItem  value={0}>0</MenuItem>
-                        <MenuItem  value={1}>1</MenuItem>
+                        <MenuItem  value={0}>Common Task</MenuItem>
+                        <MenuItem  value={1}>Other Task</MenuItem>
                         
                     </Select>
                 </FormControl>

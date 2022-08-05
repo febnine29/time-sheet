@@ -35,13 +35,21 @@ function TaskManager({
         getAllTask.get(`/api/services/app/Task/GetAll`)
         .then(response => {
             setTitle(response.data.result);
-            console.log(response.data.result.name)
+            
         })
     },[])
+
     const commonTasks = title.filter(cmTasks => cmTasks.type === 0)
     const otherTasks = title.filter(otTasks => otTasks.type === 1)
-    console.log('common tasks:', commonTasks)
-    console.log('other Tasks', otherTasks)
+
+    const handleDelTask = (id:number) => {
+        getAllTask.delete(`/api/services/app/Task/Delete?Id=${id}`)
+        .then(response => {
+            setTitle(title.filter(item => item.id !== id))
+            console.log()
+        })  
+    }
+    
 
     return (
        
@@ -53,7 +61,8 @@ function TaskManager({
                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, md: 16}}>
                 <Grid item xs={4} md={8}>
                 <Item className='commonTasks'>
-                    <h1>Common Tasks</h1>
+                    <div className=''><h1>Common Tasks</h1></div>
+                    <div className='data-task'>
                     <ul style={{listStyleType: 'none', padding:'20px'}}>
                     {commonTasks.map((data:any, index:number) => (
                         <li key={index}>
@@ -63,9 +72,18 @@ function TaskManager({
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group">
+
+                                    {data.isDeleted ? (
+                                        <Button>Archive</Button>
+                                    ) : (
+                                        <Button>UnArchive</Button>
+                                    )}
                                     <Button color="warning">Edit</Button>
-                                    <Button>Archive</Button>
-                                    <Button color="error">Delete</Button>
+                                    <Button 
+                                        onClick={() => handleDelTask(data.id)} 
+                                        color="error"
+                                        disabled={!data.isDeleted} 
+                                    > Delete </Button>
                                 </ButtonGroup>
                                 </div>
                             </div>
@@ -73,6 +91,7 @@ function TaskManager({
                         </li>
                     ))} 
                     </ul>
+                    </div>
                 </Item>
                 </Grid>
                 <Grid item xs={4} md={8}>
@@ -87,9 +106,18 @@ function TaskManager({
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group">
+
+                                    {data.isDeleted ? (
+                                        <Button>Archive</Button>
+                                    ) : (
+                                        <Button>UnArchive</Button>
+                                    )}
                                     <Button color="warning">Edit</Button>
-                                    <Button>Archive</Button>
-                                    <Button color="error">Delete</Button>
+                                    <Button 
+                                        onClick={() => handleDelTask(data.id)} 
+                                        color="error"
+                                        disabled={!data.isDeleted} 
+                                    > Delete </Button>
                                 </ButtonGroup>
                                 </div>
                             </div>

@@ -92,8 +92,35 @@ body{
     box-shadow: none;
     max-height: 50vw;
     overflow-y: scroll;
+    z-index: 11
 }
-
+ 
 #root .TaskManager .main-task .overflowTitle{
     overflow-x: hidden;
 }
+#root .TaskManager .MuiButton-root{
+    border: none
+}
+::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 20px 0px 10px 30px;
+    z-index: 10
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+   background: transparent
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #777; 
+      transition: .3s
+  
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+    transition: .3s
+  }
