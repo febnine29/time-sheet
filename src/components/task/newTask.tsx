@@ -17,25 +17,37 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 // -------typescrip import--------
 import {dataTaskForm} from '../../tscript/Task'
 
+interface arrayProps{
+    title: any[],
+    setTitle: (arg:any[]) => void,
+    // taskEdit: dataTaskForm | null
+} 
 
-export default function NewTask() {
+export default function NewTask({title, setTitle}:arrayProps) {
     const [open, setOpen] = React.useState(false);
     const [dataNewTask, setDataNewTask] = useState<Partial<dataTaskForm>>({
         name: "",
         type: 0,
         isDeleted: true
     })
-    const [reload, setReload] = useState([])
-    const handleSubmitTask = (event: React.SyntheticEvent<unknown>, reason?: string) => {
-            getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
+   
+    const handleSubmitTask = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
+        await getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
             .then(response =>{
-                console.log('add success', response);
-                setReload(response.data)
-                console.log(reload)
+               
             })
+            // -----close dialog box------
             if (reason !== 'backdropClick') {
                 setOpen(false);
             }
+            // --------Update new task in client--------
+            getAllTask.get(`/api/services/app/Task/GetAll`)
+            .then(response => {
+                setTitle(response.data.result)
+                console.log('set new task')
+                
+
+            })
     }
     
 
@@ -51,7 +63,7 @@ export default function NewTask() {
 
     return (
         <div>
-        <Button onClick={handleClickOpen} variant='outlined'>Open select dialog</Button>
+        <Button onClick={handleClickOpen} variant='outlined'>+ ADD NEW TASK</Button>
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
 
             <DialogTitle>Add new task</DialogTitle>

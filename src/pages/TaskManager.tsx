@@ -15,8 +15,9 @@ import {dataTaskForm} from '../tscript/Task';
 export interface LogoutProps{
     setIsLogin: (agr :boolean) => void,
     isLogin: boolean;
-    // titles: dataTaskForm[] | null;
+    // taskEdit: dataTaskForm | null
 }
+// ---------MUI---------------
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
@@ -28,7 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
 function TaskManager({
     isLogin, 
     setIsLogin,
-    // titles
+    // taskEdit
 }: LogoutProps){
     const [title, setTitle] = useState([] as any[])
     useEffect(()=>{
@@ -38,7 +39,21 @@ function TaskManager({
             
         })
     },[])
-
+    // const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);
+    // const [dataEdit, setDataEdit] = useState<dataTaskForm>({
+    //     id: taskEdit?.id!,
+    //     name: taskEdit?.name!,
+    //     type: taskEdit?.type!,
+    //     isDeleted: taskEdit?.isDeleted!,
+    //   });
+    //   const handleSubmitEdit = (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     // setTitle(dataEdit)
+    //   };
+    
+    const [archive, setArchive] = useState<Partial<dataTaskForm>>({
+        id: 0,
+    })
     const commonTasks = title.filter(cmTasks => cmTasks.type === 0)
     const otherTasks = title.filter(otTasks => otTasks.type === 1)
 
@@ -49,15 +64,33 @@ function TaskManager({
             console.log()
         })  
     }
-    
+    const archiveTask = async (id:number) => {
+        await getAllTask.delete(`/api/services/app/Task/Archive?Id=${id}`)
+        .then(response => {
+            
+        console.log('archived')
+        })
+        getAllTask.get(`/api/services/app/Task/GetAll`)
+            .then(response => {
+                setTitle(response.data.result)
+            })
+    }
+    const deArchiveTask = async (id:number) => {
+        await getAllTask.post(`/api/services/app/Task/DeArchive`,{id})
+        console.log('unarchived')
+        getAllTask.get(`/api/services/app/Task/GetAll`)
+            .then(response => {
+                setTitle(response.data.result)
+            })
+    }
 
     return (
-       
+    //    <StateContext.Provider value={title}>
         <Box className="TaskManager navbar" sx={{ flexGrow: 1 }}>
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
             <Grid container className='main-body main-task' columns={{ xs: 4, md: 16}} >
                 <h1>Task Manager </h1>
-                <NewTask /> 
+                <NewTask title={title} setTitle={setTitle}/> 
                 <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, md: 16}}>
                 <Grid item xs={4} md={8}>
                 <Item className='commonTasks'>
@@ -72,11 +105,10 @@ function TaskManager({
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group">
-
                                     {data.isDeleted ? (
-                                        <Button>Archive</Button>
-                                    ) : (
-                                        <Button>UnArchive</Button>
+                                        <Button onClick={() => deArchiveTask(data.id)}>UnArchive</Button>
+                                        ) : (
+                                        <Button onClick={() => archiveTask(data.id)}>Archive</Button>
                                     )}
                                     <Button color="warning">Edit</Button>
                                     <Button 
@@ -107,10 +139,10 @@ function TaskManager({
                                 <div style={{float:'right'}}>
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group">
 
-                                    {data.isDeleted ? (
-                                        <Button>Archive</Button>
-                                    ) : (
-                                        <Button>UnArchive</Button>
+                                {data.isDeleted ? (
+                                        <Button onClick={() => deArchiveTask(data.id)}>UnArchive</Button>
+                                        ) : (
+                                        <Button onClick={() => archiveTask(data.id)}>Archive</Button>
                                     )}
                                     <Button color="warning">Edit</Button>
                                     <Button 
@@ -130,7 +162,7 @@ function TaskManager({
                 </Grid>
             </Grid>
         </Box>
-        
+        // </StateContext.Provider>
     )
 }
 export default TaskManager;
