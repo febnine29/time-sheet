@@ -14,6 +14,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 // -------typescrip import--------
 import {dataTaskForm} from '../../tscript/Task'
 
@@ -21,8 +23,14 @@ interface arrayProps{
     title: any[],
     setTitle: (arg:any[]) => void,
     // taskEdit: dataTaskForm | null
+    
 } 
-
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+    props,
+    ref,
+    ) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
 export default function NewTask({title, setTitle}:arrayProps) {
     const [open, setOpen] = React.useState(false);
     const [dataNewTask, setDataNewTask] = useState<Partial<dataTaskForm>>({
@@ -30,11 +38,19 @@ export default function NewTask({title, setTitle}:arrayProps) {
         type: 0,
         isDeleted: true
     })
-   
+    // -----------ALERT------------
+    const [success, setSuccess] = useState(false)
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        setSuccess(false)
+    };
+    // ---------HANDLE----------
     const handleSubmitTask = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
         await getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
             .then(response =>{
-               
+               setSuccess(true)
             })
             // -----close dialog box------
             if (reason !== 'backdropClick') {
@@ -49,8 +65,11 @@ export default function NewTask({title, setTitle}:arrayProps) {
 
             })
     }
-    
-
+    const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);
+    const handleClickEdit = (task: dataTaskForm) => {
+        setTaskEdit(task);
+        setOpen(true);
+      };
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -66,7 +85,7 @@ export default function NewTask({title, setTitle}:arrayProps) {
         <Button onClick={handleClickOpen} variant='outlined'>+ ADD NEW TASK</Button>
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
 
-            <DialogTitle>Add new task</DialogTitle>
+            <DialogTitle>Add New Task</DialogTitle>
             <DialogContent>
             <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -105,6 +124,14 @@ export default function NewTask({title, setTitle}:arrayProps) {
             </DialogActions>
            
         </Dialog>
+        <div>
+        {success ? <Snackbar open={success} autoHideDuration={2000} onClose={handleCloseAlert} >
+                            <Alert severity="success" sx={{ width: '100%' }} onClose={handleCloseAlert}>
+                                Add New Task Success!
+                            </Alert>
+                        </Snackbar> 
+                        : <></>}
+        </div>
         </div>
     );
 }

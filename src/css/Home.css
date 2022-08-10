@@ -2,7 +2,7 @@ body{
     font-family: 'Roboto', sans-serif;
 }
 /* --------HOME NAVBAR CSS--------- */
-#root .App .MuiPaper-root{
+#root .App .MuiPaper-root.mainNav{
     background: #2189d8 !important;
     border-radius: 20px;
     box-shadow: 13px 13px 20px #7f7f7f,
