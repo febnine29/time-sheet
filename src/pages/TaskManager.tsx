@@ -140,7 +140,6 @@ function TaskManager({
         getAllTask.get(`/api/services/app/Task/GetAll`)
             .then(response => {
                 setTitle(response.data.result)
-                
             })
             
     }
@@ -158,7 +157,6 @@ function TaskManager({
             .then(response => {
                 setTitle(response.data.result)
             })
-            
     }
 
     return (
@@ -174,6 +172,7 @@ function TaskManager({
                 <Grid container spacing={{ xs: 4, md: 3 }} columns={{ xs: 4, md: 16}}>
                 <Grid item xs={4} md={8}>
                 <h1 style={{margin: '0', padding: '20px 0px', background: 'white', borderRadius: '20px 20px 0px 0px' }}>Common Tasks</h1>
+                <span></span>
                 <Item className='commonTasks' style={{borderRadius: '0px 0px 20px 20px'}}>
                     
                     <div className='data-task'>
@@ -226,7 +225,7 @@ function TaskManager({
                                         ) : (
                                         <Button onClick={() => archiveTask(data.id)}>Archive</Button>
                                     )}
-                                    <Button  color="warning">Edit</Button>
+                                    <Button onClick={() => handleClickEdit(data)} color="warning">Edit</Button>
                                     <Button 
                                         onClick={() => handleDelTask(data.id)} 
                                         color="error"
@@ -312,7 +311,7 @@ function TaskManager({
                         : <></>}
                 {error ? <Snackbar open={error} autoHideDuration={2000} onClose={handleCloseAlert} >
                     <Alert severity="error" sx={{ width: '100%' }} onClose={handleCloseAlert}>
-                        This task is in project, you can do nothing!
+                        This task is in project, you can't delete'!
                     </Alert>
                 </Snackbar> 
                 : <></>}
