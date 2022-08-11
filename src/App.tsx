@@ -98,7 +98,7 @@ function App() {
             </ProtectedRoute> 
           }> 
         </Route>
-        <Route path='/TestPage' element={<TestPage isLogin={isLogin} setIsLogin={setIsLogin}/>}></Route>
+        <Route path='/TestPage' element={<TestPage />}></Route>
       </Routes>
      
     </div>

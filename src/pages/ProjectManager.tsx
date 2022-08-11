@@ -53,7 +53,6 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
         return acc;
     }, []);
     };
-
     
     
     return (
@@ -69,15 +68,18 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             <div className='customer-name' style={{background: 'darkCyan'}}>{item.customerName}</div>
                             <div className='single-project'>
                                 {item.data.map((data, index) => (
-                                    <div key={index} style={{marginBottom: '10px'}}>
-                                        {data.name}
+                                    
+                                    <div key={index} className='project-name' style={{marginBottom: '10px'}}>
+                                        <span style={{display: 'flex'}}>
+                                        <span style={{color: 'black', fontSize:'16px'}}>{data.name}</span>
                                         <span style={{background: '#2E95EA'}}>{data.pms}</span>
                                         <span style={{background: 'red'}}>{data.activeMember} members</span>
                                         <span style={{background: '#4CAF50'}}> {dayjs(data.timeStart).format('DD/MM/YYYY')}{data.timeEnd ? <span>- {dayjs(data.timeEnd).format('DD/MM/YYYY')}</span> : ""}</span>
                                         <span>{data.status ? <span style={{background: 'grey'}}>Inactive</span> 
                                                             : <span style={{background: '#4CAF50'}}>Active</span>}</span>
-                                        
+                                        </span>
                                     </div>
+                                    
                             ))}
 
                             </div>
