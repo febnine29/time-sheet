@@ -89,16 +89,14 @@ function TaskManager({
         name: taskEdit?.name!,
         type: taskEdit?.type!,
         isDeleted: taskEdit?.isDeleted!,
-      });
-      
-      
+    });
     
     // ---------HANDLE--------
     const handleSubmitEdit = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
         console.log('data edit', dataEdit);
         await getAllTask.post(`/api/services/app/Task/Save`, dataEdit)
             .then(response =>{
-               setSuccess(true)
+                setSuccess(true)
             })
             // -----close dialog box------
             if (reason !== 'backdropClick') {
@@ -117,7 +115,7 @@ function TaskManager({
         setDataEdit(data);
         console.log('task edit', taskEdit)
         setOpen(true);
-      };
+    };
     
     const handleDelTask = (id:number) => {
         getAllTask.delete(`/api/services/app/Task/Delete?Id=${id}`)

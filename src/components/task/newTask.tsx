@@ -8,12 +8,11 @@ import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Input from '@mui/material/Input';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';import Input from '@mui/material/Input';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 // -------typescrip import--------
@@ -65,11 +64,11 @@ export default function NewTask({title, setTitle}:arrayProps) {
 
             })
     }
-    const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);
-    const handleClickEdit = (task: dataTaskForm) => {
-        setTaskEdit(task);
-        setOpen(true);
-      };
+    // const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);
+    // const handleClickEdit = (task: dataTaskForm) => {
+    //     setTaskEdit(task);
+    //     setOpen(true);
+    //   };
     const handleClickOpen = () => {
         setOpen(true);
     };

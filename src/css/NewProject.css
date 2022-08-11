@@ -1,0 +1,71 @@
+*{
+    margin: 0;
+    padding: 0
+}
+.MuiDialog-container{
+    margin: auto !important
+}
+.MuiDialog-container h2{
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px 0px
+}
+.splide{
+    display: flex;
+    flex-direction: column-reverse;
+}
+.splide__slide{
+    height: 300px;
+}
+.splide__arrow{
+    display: none;
+}
+.splide__pagination{
+    position: relative;
+    margin-bottom: 20px
+}
+.splide__pagination li{
+    width: 150px;
+    height: 40px;
+    margin: 0px 10px
+}
+.splide__pagination__page{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    font-size: 19px
+}
+.splide__pagination__page.is-active{ position: relative; transition: .3s; transform: scale(1.2) !important;}
+.splide__pagination__page.is-active:after{
+    content: '';
+    background: black;
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom:0;
+    left: 0;
+    transition: .3s;
+}
+.splide__pagination li:nth-child(1) button:before{
+    content: 'General'
+}
+.splide__pagination li:nth-child(2) button:before{
+    content: 'Team'
+}
+.splide__pagination li:nth-child(3) button:before{
+    content: 'Task'
+}
+
+.main-project .single-project span{
+    margin: 0px 3px;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 2px 5px 2px 5px
+}
+.new-project button{
+    margin: 20px 0px
+}
