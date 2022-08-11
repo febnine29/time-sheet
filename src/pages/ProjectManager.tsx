@@ -68,7 +68,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             <div className='customer-name' style={{background: 'darkCyan'}}>{item.customerName}</div>
                             <div className='single-project'>
                                 {item.data.map((data, index) => (
-                                    
+                                
                                     <div key={index} className='project-name' style={{marginBottom: '10px'}}>
                                         <span style={{display: 'flex'}}>
                                         <span style={{color: 'black', fontSize:'16px'}}>{data.name}</span>
