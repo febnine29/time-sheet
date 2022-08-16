@@ -24,4 +24,8 @@ interface AllProjectData {
       id: number;
     }[];
   }
-export type{AllProjectData, Result}
+  interface Customer{
+    name: string;
+    id: number
+  }
+export type{AllProjectData, Result, Customer}

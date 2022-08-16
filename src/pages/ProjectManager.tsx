@@ -8,9 +8,13 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import ResponsiveAppbar from './Home-Nav';
 import {authRequest} from '../api/baseUrl'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import NewProject from '../components/project/NewProject'
-import {AllProjectData, Result} from '../tscript/Project'
+import {AllProjectData, Result} from '../tscript/Project';
+import {Customer} from '../tscript/Project'
+import useDebounce from '../components/project/useDebounce'
+import { log } from 'console';
+
 interface LogoutProps{
     setIsLogin: (agr :boolean) => void,
     isLogin: boolean
@@ -24,7 +28,7 @@ interface ProjectState{
     projects: AllProjectData[] | null
 }
 function ProjectManager({isLogin, setIsLogin}: LogoutProps){
-
+    // -------------GET ALL PROJECT-------------
     const [projects, setProjects] = React.useState([] as any[])
     const getAllProject = async (data?: getProjectProps) => {
         const {status = "", search = ""} = data!;
@@ -38,8 +42,12 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
             console.log(error)
         } 
     }
-    
-    
+    // ----------GET ALL CUSTOMERS--------
+    const [customer, setCustomer] = useState<Customer[] | null>(null)
+    const getAllCustomer = async () => {
+        const response = await authRequest.get(`/api/services/app/Customer/GetAll`)
+        setCustomer(response.data.result)
+    }
     // ----------FILTER SINGLE PROJECT FOLLOW TO CUSTOMER-NAME------------
     const transformProject = (
     projectData: AllProjectData[] | null
@@ -62,8 +70,6 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
     };
     // -----------TEST--------------
     const [projectStatus, setProjectStatus] = React.useState("")
-    // const activeProjects = projects.filter(filterActive => filterActive.status === 1)
-    // const deActiveProjects = projects.filter(filterActive => filterActive.status === 0)
 
     const handleSelectOption = (e: React.ChangeEvent<HTMLSelectElement>) => {
         
@@ -75,13 +81,35 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
         }
        
     }
+    
     const [searchFilter, setSearchFilter] = useState("")
-    const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchFilter(e.target.value)
-    }
+    const [searchResult, setSearchResult] = useState("")
+    // const [focused, setFocused] = useState(false)
+
+    // const onFocus = () => {
+    //     setFocused(true)
+    // }
+    // const onBlur = () => {
+    //     setFocused(false)
+    // }
+    
+
+    // -----------BIND INPUT DATA FOR API-----------
+    const valueDebounce = useDebounce<string>(searchFilter, 500);
     useEffect(() => {
-        getAllProject({ status: projectStatus, search: searchFilter})
-    },[])
+        getAllProject({ status: projectStatus, search: valueDebounce})
+        getAllCustomer()
+    },[valueDebounce])
+    
+    const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        setSearchFilter(e.target.value)
+       
+        console.log('searchResult', searchResult)
+        console.log('etarget', e.target.value)
+        console.log('search', searchFilter)
+    }
+    // console.log('out of searchResult', searchResult)
     
     return (
         <div className="ProjectManager">
@@ -89,7 +117,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
             
             <div className='main-body main-project'>
                 <h1>Project Manager</h1>
-                <NewProject />
+                <NewProject customer={customer} />
                 
                 <Box sx={{ minWidth: 120 }}>
                     <FormControl fullWidth>
@@ -105,16 +133,23 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             <MenuItem value={"1"}>DeActive</MenuItem>
                             <MenuItem value={""}>All</MenuItem>
                         </Select>
+                        {/* <form onSubmit={(e) => handleSearchInput(e as any) } style={{width: '100%'}}> */}
                         <TextField 
                             id="outlined-basic" 
                             label="Search by client or project name" 
                             variant="outlined" sx={{margin: '10px 0px'}} 
-                            onChange={(e) => handleSearchInput(e as any)}/>
+                            onChange={(e) => handleSearchInput(e as any)}
+                            // onFocus={onFocus}
+                            // onBlur={onBlur}
+                            />
+                           {/* <button type="submit">Search</button>  */}
+                           {/* </form> */}
                     </FormControl>
                 </Box>
-                {transformProject(projects)?.map((item,index) => {
+        
+              {transformProject(projects)?.map((item,index) => { 
                     return (
-                        <div key={index}>
+                  <div key={index}>
                             <div className='customer-name' style={{background: 'darkCyan'}}>{item.customerName}</div>
                             <div className='single-project'>
                                 {item.data.map((data, index) => (
@@ -132,9 +167,9 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             ))}
 
                             </div>
-                        </div>
-                    );
-                })}
+                        </div>  
+                    ) ;
+                }) } 
             </div>
         </div>
         
