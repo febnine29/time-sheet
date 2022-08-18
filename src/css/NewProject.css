@@ -19,7 +19,8 @@
     flex-direction: column-reverse;
 }
 .splide__slide{
-    height: 300px;
+    height: 400px;
+    overflow: scroll;
 }
 .splide__arrow{
     display: none;
@@ -62,12 +63,12 @@
 }
 
 .main-project .single-project span{
-    margin: 0px 3px;
+    margin: 0px 5px;
     color: white;
     font-weight: bold;
     font-size: 13px;
     border-radius: 20px;
-    padding: 2px 5px 2px 5px
+    padding: 2px 7px 0px 7px
 }
 .main-project .customer-name .project-name{
     

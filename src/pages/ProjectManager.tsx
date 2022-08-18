@@ -79,7 +79,6 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
         } else {
         getAllProject({ status: e.target.value, search: searchFilter });
         }
-       
     }
     
     const [searchFilter, setSearchFilter] = useState("")
@@ -104,12 +103,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
     const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault()
         setSearchFilter(e.target.value)
-       
-        console.log('searchResult', searchResult)
-        console.log('etarget', e.target.value)
-        console.log('search', searchFilter)
     }
-    // console.log('out of searchResult', searchResult)
     
     return (
         <div className="ProjectManager">
@@ -158,10 +152,10 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                                         <span style={{color: 'black', fontSize:'16px'}}>{data.name}</span>
                                         <span style={{background: '#2E95EA'}}>{data.pms.join(', ')}</span>
                                         <span style={{background: 'red'}}>{data.activeMember} members</span>
-                                        <span style={{background: '#4CAF50'}}> {dayjs(data.timeStart).format('DD/MM/YYYY')}{data.timeEnd ? <span>- {dayjs(data.timeEnd).format('DD/MM/YYYY')}</span> : ""}</span>
+                                        <span style={{background: '#4CAF50'}}><span style={{padding: '0px', margin: '0'}}>{dayjs(data.timeStart).format('DD/MM/YYYY')}</span> {data.timeEnd ? <span style={{padding: '0px', margin: '0'}}>- {dayjs(data.timeEnd).format('DD/MM/YYYY')}</span>:""}</span>
                                         
-                                        <span className='active-status' style={{marginLeft: 'auto'}}>{data.status  ? <span style={{background: 'grey'}}>InActive</span> 
-                                                            : <span style={{background: '#4CAF50'}}>Active</span>}</span>
+                                        <span className='active-status' style={{marginLeft: 'auto'}}>{data.status  ? <span style={{background: 'grey', paddingBottom: '3px'}}>InActive</span> 
+                                                            : <span style={{background: '#4CAF50', paddingBottom: '3px'}}>Active</span>}</span>
                                         </span>
                                     </div>
                             ))}
