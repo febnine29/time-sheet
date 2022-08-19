@@ -16,7 +16,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker}  from '@mui/x-date-pickers/DatePicker';
-import {Customer} from '../../tscript/Project'
+import {Customer} from '../../tscript/Project';
+import {checkBranch, checkTypeMember} from '../../tscript/Project' 
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -258,12 +259,26 @@ export default function NewProject({customer}:GeneralProps){
                     </SplideSlide>
                     <SplideSlide>
                         <div className="selected-list">
-
+                            <h3 style={{margin: '10px 0px'}}>Team Members</h3>
                         </div>
                         <div className="members-list">
+                            <h3 style={{margin: '10px 0px'}}>Members List</h3>
                             <ul>
                                 {members?.map((member) => (
-                                    <li key={member.id}>{member.name}</li>
+                                    <li key={member.id} style={{margin: '10px 0px', display: 'flex'}}>
+                                        <Button color="primary" variant='contained' style={{marginRight: '15px'}}>Add</Button>
+                                        <div style={{paddingTop: '5px'}}>
+                                            <h4 style={{display: 'inline-block'}}>{member.name}</h4>
+                                            {checkBranch(member.branch) ?  <span style={{background: 'lightGreen',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>
+                                                                            {checkBranch(member.branch)}</span> 
+                                                                        : ""}
+                                            
+                                            
+                                            {checkTypeMember(member.type)? <span style={{background: 'lightSalmon',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>{checkTypeMember(member.type)}</span> : ""}
+                                            
+                                            <div><em>{member.emailAddress}</em></div>
+                                        </div>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
