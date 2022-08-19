@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import {authRequest} from '../../api/baseUrl';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import NativeSelect from '@mui/material/NativeSelect';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -34,7 +35,6 @@ export interface TaskFormNewProject {
 export interface UserFormNewProject {
     userId: number;
     type: number;
-    isTemp: boolean;
     id?: number;
 }
 export interface ProjectFormNew{
@@ -78,7 +78,7 @@ export default function NewProject({customer}:GeneralProps){
     // let stringDate = convertStartDate?.toString()
     const formatEndDate = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
     // console.log('startDate', formatStartDate)
-    // -------------NEW PROJECT CONFIG--------------
+    // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
         name: "",
         code: "",
@@ -87,12 +87,32 @@ export default function NewProject({customer}:GeneralProps){
         timeEnd: "",
         note: "",
         projectType: 0,
-        customerId: 0,
-        id: 0
+        customerId: 1,
+        id: 0,
+        tasks: [{
+            taskId: 0,
+            billable: true,
+            id: 0
+        }],
+        users: [{
+            userId: 0,
+            type: 0
+        }]
     })
-    
-    
-    const handleSubmitProject = () =>{
+    // --------------TEAM TAB CONFIG--------------
+    const [members, setMembers] = React.useState([] as any[])
+    const getAllMembers = async () => {
+        await authRequest.get(`/api/services/app/User/GetUserNotPagging`)
+        .then(response => {
+            setMembers(response.data.result)
+            console.log(members)
+        })
+    }
+    React.useEffect(() => {
+        getAllMembers()
+    },[])
+    // -------------SUBMIT-------------
+    const handleSubmitProject = async () =>{
         const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
         const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
         setNewProject({
@@ -100,6 +120,10 @@ export default function NewProject({customer}:GeneralProps){
             timeStart : startDateFormat!,
             timeEnd : endDateFormat!,
         })
+        // await authRequest.post(`/api/services/app/Project/Save`)
+        // .then(response => {
+        //     console.log(response)
+        // })
     }
     console.log('new project', newProject)
     return( 
@@ -181,11 +205,6 @@ export default function NewProject({customer}:GeneralProps){
                                         value={startDate}
                                         onChange={(newValue) => {
                                             setStartDate(newValue);
-                                            // const startDateFormat = dayjs(value).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-                                            // setNewProject({
-                                            //     ...newProject,
-                                            //     timeStart : startDateFormat!
-                                            // });
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
                                     />
@@ -197,10 +216,6 @@ export default function NewProject({customer}:GeneralProps){
                                         value={endDate}
                                         onChange={(newValue) => {
                                             setEndDate(newValue);
-                                            // console.log(startDate)
-                                            // const formatDate=dayjs(e.target.value).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-                                            
-                                            // setNewProject(formatDate);
                                         }}
                                         renderInput={(params) => <TextField {...params} />}
                                     />
@@ -218,11 +233,41 @@ export default function NewProject({customer}:GeneralProps){
                                         })
                                         } 
                                 />
-                                
+                                <h4 style={{margin: '10px 0px'}}>Project Type*</h4>
+                                <FormControl>
+                                <InputLabel id="demo-select-small">Project Type</InputLabel>
+                                <Select
+                                    labelId="demo-select-small"
+                                    id="demo-select-small"
+                                    value={newProject.projectType}  
+                                    label="projectType"
+                                    onChange={(e) => {
+                                        setNewProject({...newProject, projectType: +e.target.value})
+                                    }}
+                                >
+                                    
+                                    <MenuItem value={0}>Time-Materials</MenuItem>
+                                    <MenuItem value={1}>Fixed Fee</MenuItem>
+                                    <MenuItem value={2}>Non-Billable</MenuItem>
+                                    <MenuItem value={3}>ODC</MenuItem>
+                                </Select>
+                                </FormControl>
+                                <button onClick={handleSubmitProject}>Save</button>
                             </FormControl>
                         </Box>
                     </SplideSlide>
-                    <SplideSlide>test2</SplideSlide>
+                    <SplideSlide>
+                        <div className="selected-list">
+
+                        </div>
+                        <div className="members-list">
+                            <ul>
+                                {members?.map((member) => (
+                                    <li key={member.id}>{member.name}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </SplideSlide>
                     <SplideSlide>test3</SplideSlide>
                     </SplideTrack>
                     
