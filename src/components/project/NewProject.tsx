@@ -16,8 +16,13 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker}  from '@mui/x-date-pickers/DatePicker';
-import {Customer} from '../../tscript/Project';
-import {checkBranch, checkTypeMember} from '../../tscript/Project' 
+import {
+    checkBranch, 
+    checkTypeMember,
+    UserNotPagging, 
+    DataFilterUser,
+    Customer } from '../../tscript/Project';
+
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -26,8 +31,13 @@ import '../../css/NewProject.css'
 import dayjs from 'dayjs';
 
 export interface GeneralProps{
-    customer: Customer[] | null
+    customer: Customer[] | null;
 }
+export interface TeamProps{
+    users: UserNotPagging[] | null;
+    setUsers: (params: UserNotPagging[]) => void;
+}
+
 export interface TaskFormNewProject {
     taskId: number;
     billable: boolean;
@@ -36,6 +46,7 @@ export interface TaskFormNewProject {
 export interface UserFormNewProject {
     userId: number;
     type: number;
+    isTemp: boolean;
     id?: number;
 }
 export interface ProjectFormNew{
@@ -43,6 +54,7 @@ export interface ProjectFormNew{
     roleName: string,
     id?: number
 }
+
 interface PayLoadNewProject{
     name: string;
     code: string;
@@ -54,14 +66,14 @@ interface PayLoadNewProject{
     customerId: number;
     tasks: TaskFormNewProject[];
     users: UserFormNewProject[];
-    projectTargetUsers: ProjectFormNew[];
+    projectTargetUsers: [];
     isAllUserBelongTo: boolean;
-    komuChannelId: string,
-    isNotifyToKomu: boolean,
+    // komuChannelId: string;
+    // isNotifyToKomu: boolean;
     id: number;
 
 }
-export default function NewProject({customer}:GeneralProps){
+export default function NewProject({customer}:GeneralProps, {users, setUsers}:TeamProps){
     // --------MUI DIALOG-----------
     const [open, setOpen] = React.useState(false);
     const [fullWidth, setFullWidth] = React.useState(true);
@@ -81,50 +93,104 @@ export default function NewProject({customer}:GeneralProps){
     // console.log('startDate', formatStartDate)
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
-        name: "",
-        code: "",
-        status: 0,
+        name: "ASDVXZBNXs",
+        code: "VXCXCZXX",
         timeStart: "",
         timeEnd: "",
-        note: "",
-        projectType: 0,
-        customerId: 1,
-        id: 0,
+        note: "none",
+        projectType: 1,
+        projectTargetUsers: [],
+        customerId: 10111,
+        isAllUserBelongTo: false,
         tasks: [{
-            taskId: 0,
-            billable: true,
-            id: 0
+            taskId: 520,
+            billable: true
         }],
         users: [{
-            userId: 0,
-            type: 0
+            userId: 9,
+            type: 1,
+            isTemp: false     
         }]
+        
     })
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
+    const [userCheck, setUserCheck] = React.useState<UserNotPagging[] | null>(null);
+    const [userForm, setUserForm] = React.useState<UserFormNewProject[] | null>(null);
+    const [flagUserCheck, setFlagUserCheck] = React.useState({});
+    const [dataFilter, setDataFilter] = React.useState<DataFilterUser>({
+        branch: { index: -1 },
+        type: { index: -1 },
+        level: { index: -1 },
+        name: { nameString: "" },
+    });
+    const [selectedMembers, setSelectedMembers] = React.useState([] as any[])
+
     const getAllMembers = async () => {
         await authRequest.get(`/api/services/app/User/GetUserNotPagging`)
         .then(response => {
             setMembers(response.data.result)
-            console.log(members)
-        })
+        }) 
     }
+    // const mergeObjectById = (array1: UserNotPagging[]) => (
+    //     array2: UserFormNewProject[]
+    // ): (UserNotPagging & { typeOffice: number })[] | null => {
+    //     if (!array1 || !array2) return null;
+
+    //     return array1.map((itemArr1) => {
+    //     let result!: UserNotPagging & { typeOffice: number };
+    //     for (let item of array2) {
+    //         if (itemArr1.id === item?.userId) {
+    //         result = { ...itemArr1, typeOffice: item.type };
+    //         }
+    //     }
+    //     return result;
+    //     });
+    // };
+    const handleAddMember = (item: UserNotPagging) => {
+        console.log('item click', item)
+        selectedMembers.push(item)
+        // ----Reload selectedMembers-----
+        setSelectedMembers([...selectedMembers])
+        // ------Set Data to api-----
+        setNewProject({
+            ...newProject,
+            users: selectedMembers
+        })
+        console.log('selected members', selectedMembers)
+        // const newArray = members.filter((item) => item.id != item);
+        // setMembers(newArray);
+        const itemId = members.indexOf(item)
+        if(itemId > -1) {
+            members.splice(itemId, 1);
+        }
+    };
     React.useEffect(() => {
         getAllMembers()
     },[])
+    const handleRemoveMembers = (id: any) => {
+
+    }
+
     // -------------SUBMIT-------------
-    const handleSubmitProject = async () =>{
-        const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-        const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
+    const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
+        const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+        const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
         setNewProject({
             ...newProject,
             timeStart : startDateFormat!,
             timeEnd : endDateFormat!,
         })
-        // await authRequest.post(`/api/services/app/Project/Save`)
-        // .then(response => {
-        //     console.log(response)
-        // })
+        try {
+            await authRequest.post(`/api/services/app/Project/Save`,newProject)
+            .then(response => {
+                console.log(response)
+            })
+        }
+        catch (error) {
+            console.log(error)
+        }
+        
     }
     console.log('new project', newProject)
     return( 
@@ -253,30 +319,61 @@ export default function NewProject({customer}:GeneralProps){
                                     <MenuItem value={3}>ODC</MenuItem>
                                 </Select>
                                 </FormControl>
-                                <button onClick={handleSubmitProject}>Save</button>
+                                <button onClick={(e) => handleSubmitProject(e as any)}>Save</button>
                             </FormControl>
                         </Box>
                     </SplideSlide>
                     <SplideSlide>
                         <div className="selected-list">
                             <h3 style={{margin: '10px 0px'}}>Team Members</h3>
+                            {/* {mergeObjectById(userCheck!)(userForm!)?.map((item, index) => (
+                                <li key={index}>
+                                    <h4>{item.name}</h4>
+                                    <button onClick={(e) => handleRemoveMembers(index)}>delete</button>
+
+                                </li>
+                            ))} */}
+                            {selectedMembers.map((item, index) => (
+                                <ul>
+                                    <li key={index}>
+                                        <h4>{item.name}</h4>
+                                        <Box sx={{ minWidth: 120 }}>
+                                        <FormControl fullWidth>
+                                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                                            <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={newProject.users.type}
+                                            label="type"
+                                            onChange={(e) => {
+                                                // setNewProject({...newProject, type: +e.target.value})
+                                            }}
+                                            >
+                                            <MenuItem value={0}>Member</MenuItem>
+                                            <MenuItem value={1}>PM</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                        </Box>
+                                    </li>
+                                </ul>
+                            ))}
                         </div>
                         <div className="members-list">
                             <h3 style={{margin: '10px 0px'}}>Members List</h3>
                             <ul>
-                                {members?.map((member) => (
-                                    <li key={member.id} style={{margin: '10px 0px', display: 'flex'}}>
-                                        <Button color="primary" variant='contained' style={{marginRight: '15px'}}>Add</Button>
+                                {members?.map((item) => (
+                                    <li key={item.id} style={{margin: '10px 0px', display: 'flex'}}>
+                                        <Button onClick={() => handleAddMember(item)} color="primary" variant='contained' style={{marginRight: '15px'}}>Add</Button>
                                         <div style={{paddingTop: '5px'}}>
-                                            <h4 style={{display: 'inline-block'}}>{member.name}</h4>
-                                            {checkBranch(member.branch) ?  <span style={{background: 'lightGreen',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>
-                                                                            {checkBranch(member.branch)}</span> 
+                                            <h4 style={{display: 'inline-block'}}>{item.name}</h4>
+                                            {checkBranch(item.branch) ?  <span style={{background: 'lightGreen',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>
+                                                                            {checkBranch(item.branch)}</span> 
                                                                         : ""}
                                             
                                             
-                                            {checkTypeMember(member.type)? <span style={{background: 'lightSalmon',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>{checkTypeMember(member.type)}</span> : ""}
+                                            {checkTypeMember(item.type)? <span style={{background: 'lightSalmon',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>{checkTypeMember(item.type)}</span> : ""}
                                             
-                                            <div><em>{member.emailAddress}</em></div>
+                                            <div><em>{item.emailAddress}</em></div>
                                         </div>
                                     </li>
                                 ))}

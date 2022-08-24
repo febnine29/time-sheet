@@ -65,4 +65,18 @@ interface UserNotPagging {
   id: number;
 }
 
-export type{AllProjectData, Result, Customer, UserNotPagging} 
+interface DataFilterUser {
+  branch: {
+    index: number;
+  };
+  type: {
+    index: number;
+  };
+  level: {
+    index: number;
+  };
+  name: {
+    nameString: string;
+  };
+}
+export type{AllProjectData, Result, Customer, UserNotPagging, DataFilterUser} 
