@@ -41,7 +41,7 @@ export default function NewTask({title, setTitle}:arrayProps) {
     const [success, setSuccess] = useState(false)
     const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
         setSuccess(false)
     };
@@ -49,7 +49,7 @@ export default function NewTask({title, setTitle}:arrayProps) {
     const handleSubmitTask = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
         await getAllTask.post(`/api/services/app/Task/Save`, dataNewTask)
             .then(response =>{
-               setSuccess(true)
+                setSuccess(true)
             })
             // -----close dialog box------
             if (reason !== 'backdropClick') {
@@ -61,7 +61,6 @@ export default function NewTask({title, setTitle}:arrayProps) {
                 setTitle(response.data.result)
                 console.log('set new task')
                 
-
             })
     }
     // const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);

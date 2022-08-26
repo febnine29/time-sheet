@@ -141,7 +141,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                     </FormControl>
                 </Box>
         
-              {transformProject(projects)?.map((item,index) => { 
+                {transformProject(projects)?.map((item,index) => { 
                     return (
                   <div key={index}>
                             <div className='customer-name' style={{background: 'darkCyan'}}>{item.customerName}</div>

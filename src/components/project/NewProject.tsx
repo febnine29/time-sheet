@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import {authRequest} from '../../api/baseUrl';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -68,8 +69,6 @@ interface PayLoadNewProject{
     users: UserFormNewProject[];
     projectTargetUsers: [];
     isAllUserBelongTo: boolean;
-    // komuChannelId: string;
-    // isNotifyToKomu: boolean;
     id: number;
 
 }
@@ -86,11 +85,8 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     };
     const [startDate, setStartDate] = React.useState<Date | null>(null);
     const [endDate, setEndDate] = React.useState<Date | null>(null);
-    // let stringDate = startDate?.toString()
     const formatStartDate = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-    // let stringDate = convertStartDate?.toString()
     const formatEndDate = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-    // console.log('startDate', formatStartDate)
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
         name: "ASDVXZBNXs",
@@ -107,12 +103,13 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             billable: true
         }],
         users: [{
-            userId: 9,
-            type: 1,
+            userId: 0,
+            type: 0,
             isTemp: false     
         }]
         
     })
+    
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
     const [userCheck, setUserCheck] = React.useState<UserNotPagging[] | null>(null);
@@ -125,53 +122,58 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         name: { nameString: "" },
     });
     const [selectedMembers, setSelectedMembers] = React.useState([] as any[])
-
+    const [arraySelected, setArraySelected] = React.useState([] as any[])
     const getAllMembers = async () => {
         await authRequest.get(`/api/services/app/User/GetUserNotPagging`)
         .then(response => {
             setMembers(response.data.result)
         }) 
     }
-    // const mergeObjectById = (array1: UserNotPagging[]) => (
-    //     array2: UserFormNewProject[]
-    // ): (UserNotPagging & { typeOffice: number })[] | null => {
-    //     if (!array1 || !array2) return null;
-
-    //     return array1.map((itemArr1) => {
-    //     let result!: UserNotPagging & { typeOffice: number };
-    //     for (let item of array2) {
-    //         if (itemArr1.id === item?.userId) {
-    //         result = { ...itemArr1, typeOffice: item.type };
-    //         }
-    //     }
-    //     return result;
-    //     });
-    // };
+    const [typeValue, setTypeValue] = React.useState(1)
+    const handleChangeOffice = (
+        e: React.ChangeEvent<HTMLSelectElement>,
+        userId: number,
+        item: UserNotPagging
+    ) => {
+        // setSelectedMembers([
+        //     // ...selectedMembers,
+        //     {userId: item.id, type: +e.target.value as number}]);
+        setTypeValue(e.target.value as any)
+        console.log('type value', typeValue)
+    };
+    
     const handleAddMember = (item: UserNotPagging) => {
-        console.log('item click', item)
-        selectedMembers.push(item)
-        // ----Reload selectedMembers-----
-        setSelectedMembers([...selectedMembers])
-        // ------Set Data to api-----
-        setNewProject({
-            ...newProject,
-            users: selectedMembers
-        })
-        console.log('selected members', selectedMembers)
-        // const newArray = members.filter((item) => item.id != item);
-        // setMembers(newArray);
+        arraySelected.push(item)
+        // ----REMOVE ITEM FROM OLD ARRAY----
         const itemId = members.indexOf(item)
         if(itemId > -1) {
             members.splice(itemId, 1);
         }
-    };
-    React.useEffect(() => {
+        
+        // -------SET DATA-------
+        setSelectedMembers([
+            ...selectedMembers,
+            {userId: item.id, type: typeValue, isTemp: false}
+        ]);
+        console.log('item', item)
+    }
+    useEffect(() => {
+        setNewProject({
+            ...newProject,
+            users: [...selectedMembers]
+        })
+        console.log('selected members', selectedMembers)
+        
+    }, [selectedMembers])
+    useEffect(() =>{
+        console.log('new project', newProject)
+    },[newProject])
+    useEffect(() => { 
         getAllMembers()
     },[])
     const handleRemoveMembers = (id: any) => {
 
     }
-
     // -------------SUBMIT-------------
     const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
         const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -192,7 +194,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         }
         
     }
-    console.log('new project', newProject)
+    
     return( 
         <div className='new-project'>
             <Button variant="outlined" onClick={handleClickOpen}>
@@ -333,30 +335,35 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
 
                                 </li>
                             ))} */}
-                            {selectedMembers.map((item, index) => (
-                                <ul>
-                                    <li key={index}>
-                                        <h4>{item.name}</h4>
-                                        <Box sx={{ minWidth: 120 }}>
-                                        <FormControl fullWidth>
-                                            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                                            <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={newProject.users.type}
-                                            label="type"
-                                            onChange={(e) => {
-                                                // setNewProject({...newProject, type: +e.target.value})
-                                            }}
-                                            >
+                            <ul>
+                            {/* {arraySelected.map((item: any, index) => (
+                                <li key={item.id}>
+                                    <h4>{item.name}</h4> */}
+                                    {selectedMembers.map((item, id) => (
+                                    <Box sx={{ minWidth: 120 }} key={item.id}>
+                                        <h4>test{item.userId}</h4>
+                                    <FormControl fullWidth>
+                                        <InputLabel>Type</InputLabel>
+                                        <Select
+                                        value={item.type!}
+                                        label="type"
+                                        onChange={(e: SelectChangeEvent<any>) => {
+                                            console.log('item', item)
+                                            console.log('item type', item.type);
+                                            console.log('etarget', e.target.value);
+                                            // handleChangeOffice(e.target?.value as any, item.id, item!);
+                                            handleChangeOffice(e as any, item.id, item!)
+                                        }}
+                                        > 
                                             <MenuItem value={0}>Member</MenuItem>
                                             <MenuItem value={1}>PM</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        </Box>
-                                    </li>
-                                </ul>
-                            ))}
+                                        </Select>
+                                    </FormControl>
+                                    </Box>
+                                        ))} 
+                                {/* </li>
+                            ))}   */}
+                            </ul>
                         </div>
                         <div className="members-list">
                             <h3 style={{margin: '10px 0px'}}>Members List</h3>
