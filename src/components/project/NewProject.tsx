@@ -1,6 +1,7 @@
 import * as React from 'react';
-import {useEffect} from 'react';
+import {useEffect, useCallback} from 'react';
 import {authRequest} from '../../api/baseUrl';
+import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
@@ -22,7 +23,16 @@ import {
     checkTypeMember,
     UserNotPagging, 
     DataFilterUser,
-    Customer } from '../../tscript/Project';
+    Customer,
+    getObjectById,
+    mergeObjectUserForm,
+    mergeObjectById,
+    UserFormNewProject,
+    filterUser,
+deleteArrInArrById,
+deleteArrRemoveUserForm,
+PayLoadNewProject,
+TaskFormNewProject } from '../../tscript/Project';
 
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
@@ -37,40 +47,14 @@ export interface GeneralProps{
 export interface TeamProps{
     users: UserNotPagging[] | null;
     setUsers: (params: UserNotPagging[]) => void;
+    userDefaultValues?: UserFormNewProject[];
+    setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
 }
 
-export interface TaskFormNewProject {
-    taskId: number;
-    billable: boolean;
-    id?: number;
-}
-export interface UserFormNewProject {
+
+interface MembersPayload{
     userId: number;
-    type: number;
-    isTemp: boolean;
-    id?: number;
-}
-export interface ProjectFormNew{
-    userId: number,
-    roleName: string,
-    id?: number
-}
-
-interface PayLoadNewProject{
-    name: string;
-    code: string;
-    status: number;
-    timeStart: string;
-    timeEnd: string;
-    note: string;
-    projectType: number;
-    customerId: number;
-    tasks: TaskFormNewProject[];
-    users: UserFormNewProject[];
-    projectTargetUsers: [];
-    isAllUserBelongTo: boolean;
-    id: number;
-
+    type: number
 }
 export default function NewProject({customer}:GeneralProps, {users, setUsers}:TeamProps){
     // --------MUI DIALOG-----------
@@ -104,23 +88,23 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         }],
         users: [{
             userId: 0,
-            type: 0,
-            isTemp: false     
+            type: 0  
         }]
         
     })
     
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
-    const [userCheck, setUserCheck] = React.useState<UserNotPagging[] | null>(null);
-    const [userForm, setUserForm] = React.useState<UserFormNewProject[] | null>(null);
-    const [flagUserCheck, setFlagUserCheck] = React.useState({});
-    const [dataFilter, setDataFilter] = React.useState<DataFilterUser>({
-        branch: { index: -1 },
-        type: { index: -1 },
-        level: { index: -1 },
-        name: { nameString: "" },
-    });
+    // const [userCheck, setUserCheck] = React.useState<UserNotPagging[] | null>(null);
+    // const [userForm, setUserForm] = React.useState<UserFormNewProject[] | null>(null);
+    // const [flagUserCheck, setFlagUserCheck] = React.useState({});
+    // const [dataFilter, setDataFilter] = React.useState<DataFilterUser>({
+    //     branch: { index: -1 },
+    //     type: { index: -1 },
+    //     level: { index: -1 },
+    //     name: { nameString: "" },
+    // });
+    
     const [selectedMembers, setSelectedMembers] = React.useState([] as any[])
     const [arraySelected, setArraySelected] = React.useState([] as any[])
     const getAllMembers = async () => {
@@ -129,51 +113,71 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             setMembers(response.data.result)
         }) 
     }
-    const [typeValue, setTypeValue] = React.useState(1)
-    const handleChangeOffice = (
-        e: React.ChangeEvent<HTMLSelectElement>,
-        userId: number,
-        item: UserNotPagging
-    ) => {
-        // setSelectedMembers([
-        //     // ...selectedMembers,
-        //     {userId: item.id, type: +e.target.value as number}]);
-        setTypeValue(e.target.value as any)
-        console.log('type value', typeValue)
-    };
-    
-    const handleAddMember = (item: UserNotPagging) => {
+    // const [dataSelect, setDataSelect] = React.useState<{
+    //     userId : number,
+    //     type : number
+    // } | null>(null)
+
+    const handleAddMember = async (item: UserNotPagging) => {
         arraySelected.push(item)
+        // console.log('arraySelected', arraySelected)
         // ----REMOVE ITEM FROM OLD ARRAY----
-        const itemId = members.indexOf(item)
+        const itemId = members.indexOf(item)            
         if(itemId > -1) {
             members.splice(itemId, 1);
         }
-        
         // -------SET DATA-------
+        
         setSelectedMembers([
-            ...selectedMembers,
-            {userId: item.id, type: typeValue, isTemp: false}
-        ]);
-        console.log('item', item)
+            ...selectedMembers
+            // {userId: item.id, type: typeValue}
+        ])
     }
+    let membersSelected: { userId: number; type: number }[] = [];
+    const handleData = () => {
+        arraySelected.forEach((member: UserNotPagging) =>
+        membersSelected.push({
+            userId: member.id,
+            type:
+            typeof member.type === "undefined" ? 1 : member.type,
+        }),
+    )
+    }
+    
+    const [userId, setUserId] = React.useState<number | null>(null)
+    const [typeValue, setTypeValue] = React.useState(1)
+    const handleChangeOffice = (
+        e: React.ChangeEvent<HTMLSelectElement>,
+        userId: number
+    ) => {
+        setTypeValue(+e.target.value)
+        // // console.log('dataSelect', dataSelect)
+        
+        // setSelectedMembers([...selectedMembers,
+        //     {userId: userId, type: e.target.value}
+        // ])
+    };
+    
     useEffect(() => {
         setNewProject({
             ...newProject,
-            users: [...selectedMembers]
+            users: [...membersSelected]
         })
-        console.log('selected members', selectedMembers)
-        
-    }, [selectedMembers])
+        console.log('membersSelected', membersSelected)
+        console.log('arraySelected', arraySelected)
+    }, [
+        // membersSelected,
+        typeValue])
+
+    
     useEffect(() =>{
-        console.log('new project', newProject)
+        // console.log('new project', newProject)
     },[newProject])
+
     useEffect(() => { 
         getAllMembers()
     },[])
-    const handleRemoveMembers = (id: any) => {
-
-    }
+    
     // -------------SUBMIT-------------
     const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
         const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
@@ -205,7 +209,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             sx={{height: '100vh'}}
             maxWidth={maxWidth}
             open={open} onClose={handleClose}>
-                <DialogTitle>Create New Project </DialogTitle>
+                <DialogTitle>Create New Project </DialogTitle>            
+                <Button onClick={handleData}>render</Button>
+
                 <DialogContent >
                     
                     <div className="splide__progress">
@@ -328,42 +334,36 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                     <SplideSlide>
                         <div className="selected-list">
                             <h3 style={{margin: '10px 0px'}}>Team Members</h3>
-                            {/* {mergeObjectById(userCheck!)(userForm!)?.map((item, index) => (
-                                <li key={index}>
-                                    <h4>{item.name}</h4>
-                                    <button onClick={(e) => handleRemoveMembers(index)}>delete</button>
-
-                                </li>
-                            ))} */}
-                            <ul>
-                            {/* {arraySelected.map((item: any, index) => (
+                            
+                            {/* <ul>
+                            {arraySelected.map((item: any, index) => (
                                 <li key={item.id}>
                                     <h4>{item.name}</h4> */}
                                     {selectedMembers.map((item, id) => (
-                                    <Box sx={{ minWidth: 120 }} key={item.id}>
-                                        <h4>test{item.userId}</h4>
+                                    <Box sx={{ minWidth: 120 }} key={item.id} >
+                                        <h4>member: {item.id}</h4>
                                     <FormControl fullWidth>
-                                        <InputLabel>Type</InputLabel>
+                                        <InputLabel>Type</InputLabel> 
                                         <Select
-                                        value={item.type!}
+                                        value={item.type}
                                         label="type"
-                                        onChange={(e: SelectChangeEvent<any>) => {
+                                        onChange={(e) => {
                                             console.log('item', item)
-                                            console.log('item type', item.type);
-                                            console.log('etarget', e.target.value);
                                             // handleChangeOffice(e.target?.value as any, item.id, item!);
-                                            handleChangeOffice(e as any, item.id, item!)
+                                            handleChangeOffice(e as any, item.id)
                                         }}
                                         > 
                                             <MenuItem value={0}>Member</MenuItem>
                                             <MenuItem value={1}>PM</MenuItem>
+                                            <MenuItem value={2}>Shadow</MenuItem>
+                                            <MenuItem value={3}>Deactive</MenuItem>
                                         </Select>
                                     </FormControl>
                                     </Box>
                                         ))} 
                                 {/* </li>
-                            ))}   */}
-                            </ul>
+                            ))}   
+                            </ul> */}
                         </div>
                         <div className="members-list">
                             <h3 style={{margin: '10px 0px'}}>Members List</h3>

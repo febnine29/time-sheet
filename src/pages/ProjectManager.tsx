@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Suspense, lazy} from 'react';
 import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -9,11 +10,14 @@ import TextField from '@mui/material/TextField';
 import ResponsiveAppbar from './Home-Nav';
 import {authRequest} from '../api/baseUrl'
 import { useEffect, useState, useRef } from 'react';
-import NewProject from '../components/project/NewProject'
+import NewProject from '../components/project/NewProject';
 import {AllProjectData, Result} from '../tscript/Project';
 import {Customer} from '../tscript/Project'
 import useDebounce from '../components/project/useDebounce'
 import { log } from 'console';
+
+// export const NewProject = await import("../components/project/NewProject")
+// const NewProject = lazy(() => import("../components/project/NewProject"))
 
 interface LogoutProps{
     setIsLogin: (agr :boolean) => void,
