@@ -98,6 +98,34 @@ export const deleteArrInArrById = (
     return result;
   });
 };
+export const deleteArrInArrByIdTask = (
+  arrayNeedDelete: Task[],
+  array: Task[] | null
+) => {
+  if (!arrayNeedDelete || !array) return null;
+  return arrayNeedDelete.filter((itemOfArrayNeedDelete) => {
+    let result = true;
+    for (let itemOfArray of array) {
+      if (itemOfArray.id === itemOfArrayNeedDelete.id) result = false;
+    }
+    return result;
+  });
+};
+export const mergeObjectByIdTask =
+  (array1: Task[]) =>
+  (array2: TaskFormNewProject[]): (Task & { billable: boolean })[] | null => {
+    if (!array1 || !array2) return null;
+    return array1.map((itemArr1) => {
+      let result!: Task & { billable: boolean };
+
+      array2.forEach((itemArr2) => {
+        if (itemArr1.id === itemArr2.taskId) {
+          result = { ...itemArr1, billable: itemArr2.billable };
+        }
+      });
+      return result;
+    });
+  };
 
 export const deleteArrRemoveUserForm =
   (userForm: UserFormNewProject[]) => (userId: number) => {
@@ -185,7 +213,67 @@ export const mergeObjectById =
       return result ;
     });
   };
-
+  export const dataLevel = [
+    { level: 0, name: "Intern_0" },
+    { level: 1, name: "Intern_1" },
+    { level: 2, name: "Intern_2" },
+    { level: 3, name: "Prefresher" },
+    { level: 4, name: "Fresher-" },
+    { level: 5, name: "Fresher" },
+    { level: 6, name: "Fresher+" },
+    { level: 7, name: "Junior-" },
+    { level: 8, name: "Junior" },
+    { level: 9, name: "Junior+" },
+    { level: 10, name: "Middle-" },
+    { level: 11, name: "Middle" },
+    { level: 12, name: "Middle+" },
+    { level: 13, name: "Senior-" },
+    { level: 14, name: "Senior" },
+    { level: 15, name: "Senior+" },
+  ];
+  export const checkLevel = (level: number | null): string => {
+    if (level || level === 0) {
+      const data = dataLevel.filter((item) => item.level === level);
+      return data[0].name;
+    }
+    return "";
+  };
+  
+  export const dataTypeUser = [
+    { type: 0, name: "Staff" },
+    { type: 1, name: "Internship" },
+    { type: 2, name: "Collaborator" },
+  ];
+  
+  export const checkTypeUser = (type: number | null): string => {
+    if (type || type === 0) {
+      const data = dataTypeUser.filter((item) => item.type === type);
+      return data[0].name;
+    }
+    return "";
+  };
+  interface Task {
+    name: string;
+    type: number;
+    isDeleted: boolean;
+    id: number;
+  }
+  export const mergeObjectTaskForm =
+  (taskForm: TaskFormNewProject[]) =>
+  (dataChangeTaskForm: TaskFormNewProject) => {
+    if (!taskForm || !dataChangeTaskForm) return null;
+    return taskForm.map((itemArr1) => {
+      if (itemArr1.taskId === dataChangeTaskForm.taskId) {
+        return dataChangeTaskForm;
+      } else {
+        return itemArr1;
+      }
+    });
+  };
+  export const deleteArrRemoveTaskForm =
+  (userForm: TaskFormNewProject[]) => (taskId: number) => {
+    return userForm.filter((item) => item.taskId !== taskId);
+  };
 export type{
   AllProjectData, 
   Result, Customer, 
@@ -193,4 +281,5 @@ export type{
   UserFormNewProject, 
   DataFilterUser,
 PayLoadNewProject,
-TaskFormNewProject} 
+TaskFormNewProject,
+Task} 

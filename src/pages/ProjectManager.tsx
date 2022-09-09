@@ -11,6 +11,7 @@ import ResponsiveAppbar from './Home-Nav';
 import {authRequest} from '../api/baseUrl'
 import { useEffect, useState, useRef } from 'react';
 import NewProject from '../components/project/NewProject';
+import NewProjectTest from '../components/project/NewProjectTest';
 import {AllProjectData, Result} from '../tscript/Project';
 import {Customer} from '../tscript/Project'
 import useDebounce from '../components/project/useDebounce'
@@ -116,7 +117,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
             <div className='main-body main-project'>
                 <h1>Project Manager</h1>
                 <NewProject customer={customer} />
-                
+                {/* <NewProjectTest customer={customer}/> */}
                 <Box sx={{ minWidth: 120 }}>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Filter by project status</InputLabel>
@@ -131,17 +132,13 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             <MenuItem value={"1"}>DeActive</MenuItem>
                             <MenuItem value={""}>All</MenuItem>
                         </Select>
-                        {/* <form onSubmit={(e) => handleSearchInput(e as any) } style={{width: '100%'}}> */}
                         <TextField 
                             id="outlined-basic" 
                             label="Search by client or project name" 
                             variant="outlined" sx={{margin: '10px 0px'}} 
                             onChange={(e) => handleSearchInput(e as any)}
-                            // onFocus={onFocus}
-                            // onBlur={onBlur}
+                            
                             />
-                           {/* <button type="submit">Search</button>  */}
-                           {/* </form> */}
                     </FormControl>
                 </Box>
         

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Tasks from './NewProjectSlice/Tasks'
 import {useEffect, useCallback} from 'react';
 import {authRequest} from '../../api/baseUrl';
 import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
@@ -18,7 +17,7 @@ import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
+import RemoveCircleIcon from '@mui/icons-material/Remove';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker}  from '@mui/x-date-pickers/DatePicker';
@@ -26,7 +25,9 @@ import {
     checkBranch, 
     checkTypeMember,
     UserNotPagging, 
+    DataFilterUser,
     Customer,
+    getObjectById,
     mergeObjectUserForm,
     mergeObjectById,
     UserFormNewProject,
@@ -35,12 +36,14 @@ deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
 TaskFormNewProject } from '../../tscript/Project';
+
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import '../../css/NewProject.css'
 // ------------IMPORT DAYJS-------------
 import dayjs from 'dayjs';
+import { isTemplateExpression } from 'typescript';
 
 export interface GeneralProps{
     customer: Customer[] | null;
@@ -293,6 +296,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                     <MenuItem value={3}>ODC</MenuItem>
                                 </Select>
                                 </FormControl>
+                                <button onClick={(e) => handleSubmitProject(e as any)}>Save</button>
                             </FormControl>
                         </Box>
                     </SplideSlide>
@@ -304,7 +308,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 key={index}
                                 >
                                     <IconButton onClick={() => handleRemove(item)} color='error'>
-                                        <CloseIcon sx={{fontSize: '26px'}} />
+                                        <RemoveCircleIcon sx={{fontSize: '30px'}} />
                                     </IconButton>
                                     <h4 style={{marginRight: '50px'}}>{item.name}</h4>
                                     <FormControl variant='standard'>
@@ -349,9 +353,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                             </ul>
                         </div>
                     </SplideSlide>
-                    <SplideSlide>
-                        <Tasks />
-                    </SplideSlide>
+                    <SplideSlide>test3</SplideSlide>
                     </SplideTrack>
                     
                     </Splide>
