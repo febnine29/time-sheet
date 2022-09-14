@@ -109,7 +109,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             setArraySelected([...arraySelected, item])
         }
         if (!selectedMembers) {
-            console.log("set");
             setSelectedMembers([{ userId: item.id, type: 1 }]);
         } else {
             setSelectedMembers([...selectedMembers!, { userId: item.id, type: 0 }]);
@@ -173,7 +172,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     return( 
         <div className='new-project'>
             <Button variant="contained" color='primary' onClick={handleClickOpen}>
-                Create New Project
+                Create Project
             </Button>
             <Dialog 
             // fullWidth={fullWidth}
@@ -297,8 +296,8 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                         </Box>
                     </SplideSlide>
                     <SplideSlide>
-                        <div className="selected-list">
-                            <h3 style={{margin: '10px 0px'}}>Team Members</h3>
+                        {/* <div className="selected-list">
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid'}}>Team Members</h3>
                             {mergeObjectById(arraySelected!)(selectedMembers!)?.map((item, index) => (
                                 <Box sx={{ display: 'flex', alignItems: 'center', height: '50px' }} 
                                 key={index}
@@ -326,7 +325,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                             
                         </div>
                         <div className="members-list">
-                            <h3 style={{margin: '10px 0px'}}>Members List</h3>
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid'}}>Members List</h3>
                             <ul>
                                 {members?.map((item) => (
                                     <li key={item.id} style={{margin: '10px 0px', display: 'flex'}}>
@@ -347,13 +346,12 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                     </li>
                                 ))}
                             </ul>
-                        </div>
+                        </div> */}
                     </SplideSlide>
                     <SplideSlide>
                         <Tasks />
                     </SplideSlide>
                     </SplideTrack>
-                    
                     </Splide>
                 </DialogContent>
                 <DialogActions>

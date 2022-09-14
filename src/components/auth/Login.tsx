@@ -62,7 +62,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
                 <a><img src={nccLogo}></img></a>
                 
             </div>
-            <h1>TimeSheet</h1>
+            <h1 style={{marginBottom: '20px'}}>TimeSheet</h1>
             <form onSubmit={handleSubmit}>
                 <TextField
                     id="outlined-basic"

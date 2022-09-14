@@ -30,8 +30,8 @@
     margin-bottom: 20px
 }
 .splide__pagination li{
-    width: 150px;
-    height: 40px;
+    width: 120px;
+    height: 50px;
     margin: 0px 10px
 }
 .splide__pagination__page{
@@ -39,12 +39,13 @@
     height: 100%;
     margin: 0;
     border-radius: 0;
-    font-size: 19px
+    font-size: 19px;
+    background:rgb(255, 242, 242)
 }
 .splide__pagination__page.is-active{ position: relative; transition: .3s; transform: scale(1.2) !important;}
 .splide__pagination__page.is-active:after{
     content: '';
-    background: black;
+    background: rgb(255, 62, 62);
     width: 100%;
     height: 2px;
     position: absolute;

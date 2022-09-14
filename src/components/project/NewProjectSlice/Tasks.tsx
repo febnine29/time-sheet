@@ -26,29 +26,7 @@ export interface TasksProps {
     taskDefaultValue?: TaskFormNewProject[];
 }
 export default function Tasks(){
-    // ----------MUI CONFIG----------
-    const [checked, setChecked] = React.useState([true, false]);
-    const handleChange1 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, event.target.checked]);
-    };
-    const handleChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([event.target.checked, checked[1]]);
-    };
-    const handleChange3 = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setChecked([checked[0], event.target.checked]);
-    };
-    const children = (
-        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-        <FormControlLabel
-            label="Child 1"
-            control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
-        />
-        <FormControlLabel
-            label="Child 2"
-            control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
-        />
-        </Box>
-    );
+   
     // -----------PERSONAL CONFIG------------
     const [tasksCheck, setTasksCheck] = React.useState<Task[] | null>(null);
     const [taskForm, setTaskForm] = React.useState<TaskFormNewProject[] | null>(null);
@@ -90,14 +68,13 @@ export default function Tasks(){
     };
 
     const handleClickRemoveTask = (task: Task) => {
-    setTasksCheck(deleteArrInArrByIdTask(tasksCheck as Task[], [task])!);
-    // handle remove taskCpn
-        if (tasksCpn) {
-            setTasksCpn([...tasksCpn, task]);
+        setTasksCheck(deleteArrInArrByIdTask(tasksCheck as Task[], [task])!);
+
+            if (tasksCpn) {
+                setTasksCpn([...tasksCpn, task]);
             }
-            // handle remove taskForm
-            setTaskForm(
-            deleteArrRemoveTaskForm(taskForm as TaskFormNewProject[])(task.id)
+                setTaskForm(
+                deleteArrRemoveTaskForm(taskForm as TaskFormNewProject[])(task.id)
             );
     };
     const handleChangeCheckBox = (
@@ -115,46 +92,26 @@ export default function Tasks(){
         setTasksCpn(tasks);
     }, [tasks]);
 
-    // React.useEffect(() => {
-    //     if (tasksCpn) {
-    //     setTasksCpn(deleteArrInArrById(tasksCpn, tasksCheck)!);
-    //     }
-    // }, [flagTaskCheck]);
 
-    // React.useEffect(() => {
-    //     if (tasksCpn) {
-    //     setTasksCpn(deleteArrInArrById(tasksCpn, tasksCheck)!);
-    //     }
-    // }, [flagTaskCheck]);
-    // React.useEffect(() => {
-    //     setValue("tasks", taskForm!);
-    // }, [taskForm]);
-    // React.useEffect(() => {
-    //     if (taskDefaultValue) {
-    //     setTaskForm(taskDefaultValue);
-    //     setTasksCheck(getObjectById(taskDefaultValue!)(tasks!));
-    //     setFlagTaskCheck({});
-    //     }
-    // }, [taskDefaultValue]);
     return (
         <div className="Task">
             <div className="selected-tasks">
-                <h3>Selected Tasks</h3>
+                <h3 style={{height: '30px', borderBottom: '1px solid lightGrey'}}>Selected Tasks</h3>
             {mergeObjectByIdTask(tasksCheck!)(taskForm!)?.map((task, index) => (
-                <div key={index} style={{display: 'flex', alignItems: 'center'}}>
+                <div key={index} style={{display: 'flex', alignItems: 'center', maxWidth: '600px'}}>
                     <IconButton onClick={() => handleClickRemoveTask(task)} color="error">
                         <CloseIcon />
                     </IconButton>
                     <h4>{task.name}</h4>
-                    <Checkbox 
+                    <Checkbox sx={{marginLeft: 'auto'}} 
                     onChange={(e) => handleChangeCheckBox(e as any,task.id)} />
                 </div>
             ))}
             </div>
             <div className="tasks-list">
-                <h3>Tasks List</h3>
+                <h3 style={{height: '30px', borderBottom: '1px solid lightGrey'}}>Tasks List</h3>
             {tasks.map((task) =>(
-                <div style={{display: 'flex', alignItems: 'center'}}>
+                <div style={{display: 'flex', alignItems: 'center', maxWidth: '600px'}}>
                     <IconButton color="primary" onClick={() => handleClickAddTask(task)}>
                         <AddCircleIcon></AddCircleIcon>
                     </IconButton>

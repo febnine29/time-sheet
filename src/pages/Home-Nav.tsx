@@ -158,7 +158,7 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar className="ava-right" src={ava} />
+                <Avatar sx={{background: 'white'}} className="ava-right" src={nccLogo} />
               </IconButton>
             </Tooltip>
             <Menu

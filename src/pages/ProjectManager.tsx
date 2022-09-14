@@ -145,7 +145,9 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                 {transformProject(projects)?.map((item,index) => { 
                     return (
                   <div key={index}>
-                            <div className='customer-name' style={{background: 'darkCyan'}}>{item.customerName}</div>
+                            <div className='customer-name' style={{background: 'red', padding: '5px 0px 5px 10px',margin: '10px 0px 15px 0px', textAlign: 'left', textTransform: 'uppercase', fontWeight: 'bold', color: 'white'}}>
+                                {item.customerName}
+                            </div>
                             <div className='single-project'>
                                 {item.data.map((data, index) => (
                                     <div key={index} className='project-name' style={{marginBottom: '10px'}}>
