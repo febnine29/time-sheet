@@ -14,7 +14,7 @@ function Home({setIsLogin, isLogin}:LogoutProps){
         <div className="Home">
             <ResponsiveAppBar isLogin={isLogin} setIsLogin={setIsLogin}/>
             <div className='main-body main-home'>
-                <h1>Home</h1>
+                <h1>Welcome To TimeSheet</h1>
             </div>
             
         </div>

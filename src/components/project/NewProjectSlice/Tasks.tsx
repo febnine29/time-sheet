@@ -5,6 +5,8 @@ import {UserNotPagging} from '../../../tscript/Project';
 import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import {useDispatch, useSelector} from 'react-redux';
+import {taskAdded} from '../../../features/ProjectReducer'
 import {
     deleteArrInArrByIdTask,
     deleteArrRemoveTaskForm,
@@ -25,8 +27,9 @@ export interface TasksProps {
     setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
     taskDefaultValue?: TaskFormNewProject[];
 }
+
 export default function Tasks(){
-   
+    const dispatch = useDispatch()
     // -----------PERSONAL CONFIG------------
     const [tasksCheck, setTasksCheck] = React.useState<Task[] | null>(null);
     const [taskForm, setTaskForm] = React.useState<TaskFormNewProject[] | null>(null);
@@ -84,8 +87,10 @@ export default function Tasks(){
         setTaskForm(
         mergeObjectTaskForm(taskForm!)({ taskId, billable: e.target.checked })
         );
+        
     };
     React.useEffect(() => {
+        dispatch(taskAdded(taskForm))
         console.log('taskForm', taskForm)
     },[taskForm])
     React.useEffect(() => {

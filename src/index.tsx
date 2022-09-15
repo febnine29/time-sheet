@@ -3,8 +3,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
-
-import Context from './app/Context'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
@@ -16,9 +14,7 @@ root.render(
   <React.StrictMode>
     <Router>
     <Provider store={store}>
-      {/* <Context.Provider value={{}}> */}
         <App />
-      {/* </Context.Provider> */}
     </Provider>
     </Router>
   </React.StrictMode>

@@ -1,5 +1,7 @@
 import * as React from 'react';
 import {Suspense, lazy} from 'react';
+import {useSelector} from 'react-redux'
+import { useAppSelector, useAppDispatch } from '../app/hooks';
 import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
@@ -16,7 +18,7 @@ import {AllProjectData, Result} from '../tscript/Project';
 import {Customer} from '../tscript/Project'
 import useDebounce from '../components/project/useDebounce'
 import { log } from 'console';
-
+import {taskSelector} from '../features/ProjectReducer'
 // export const NewProject = await import("../components/project/NewProject")
 // const NewProject = lazy(() => import("../components/project/NewProject"))
 

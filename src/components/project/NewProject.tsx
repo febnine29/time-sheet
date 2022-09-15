@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {useSelector} from 'react-redux';
+import { taskSelector } from '../../features/ProjectReducer';
 import Tasks from './NewProjectSlice/Tasks'
 import {useEffect, useCallback} from 'react';
 import {authRequest} from '../../api/baseUrl';
@@ -6,6 +8,7 @@ import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -51,10 +54,6 @@ export interface TeamProps{
     userDefaultValues?: UserFormNewProject[];
     setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
 }
-interface MembersPayload{
-    userId: number;
-    type: number
-}
 export default function NewProject({customer}:GeneralProps, {users, setUsers}:TeamProps){
     // --------MUI DIALOG-----------
     const [open, setOpen] = React.useState(false);
@@ -64,6 +63,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         setOpen(true);
     };
     const handleClose = () => {
+        setRender(false)
         setOpen(false);
     };
     const [startDate, setStartDate] = React.useState<Date | null>(null);
@@ -101,7 +101,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             setMembers(response.data.result)
         }) 
     }
-
+    const [render, setRender] = React.useState(false)
+    const handleRenderMembers = () => {
+        setRender(true)
+    }
     const handleAddMember = (item: UserNotPagging) => {
         if(!arraySelected){
             setArraySelected([item])
@@ -166,9 +169,13 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         catch (error) {
             console.log(error)
         }
-        console.log('newProject', newProject)
+        setOpen(false)
+        setRender(false)
     }
-    
+    const taskData = useSelector(taskSelector)
+    useEffect(() => {
+        console.log('taskData', taskData)
+    },[taskData])
     return( 
         <div className='new-project'>
             <Button variant="contained" color='primary' onClick={handleClickOpen}>
@@ -296,8 +303,8 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                         </Box>
                     </SplideSlide>
                     <SplideSlide>
-                        {/* <div className="selected-list">
-                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid'}}>Team Members</h3>
+                        <div className="selected-list">
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid lightGrey'}}>Team Members</h3>
                             {mergeObjectById(arraySelected!)(selectedMembers!)?.map((item, index) => (
                                 <Box sx={{ display: 'flex', alignItems: 'center', height: '50px' }} 
                                 key={index}
@@ -325,9 +332,13 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                             
                         </div>
                         <div className="members-list">
-                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid'}}>Members List</h3>
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid lightGrey'}}>Members List</h3>
                             <ul>
-                                {members?.map((item) => (
+                                <Button onClick={handleRenderMembers} >
+                                    <PeopleAltIcon />
+                                    <span style={{fontSize: '16px', marginLeft: '10px', textTransform: 'capitalize'}}>Show Members</span>
+                                </Button>
+                                {render ? members?.map((item) => (
                                     <li key={item.id} style={{margin: '10px 0px', display: 'flex'}}>
                                         <IconButton onClick={() => handleAddMember(item)}color='primary' style={{marginRight: '15px'}}>
                                             <AddCircleIcon sx={{fontSize: '30px'}}/>
@@ -344,9 +355,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                             <div><em>{item.emailAddress}</em></div>
                                         </div>
                                     </li>
-                                ))}
+                                )) : ''}
                             </ul>
-                        </div> */}
+                        </div>
                     </SplideSlide>
                     <SplideSlide>
                         <Tasks />
