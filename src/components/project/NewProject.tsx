@@ -38,6 +38,7 @@ deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
 TaskFormNewProject } from '../../tscript/Project';
+import useDebounce from '../project/useDebounce'
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -131,10 +132,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         )
     };
 
-    useEffect(() => {
-        console.log('selectedMembers', selectedMembers)
-    }, [selectedMembers])
-
     useEffect(() =>{
         console.log('new project', newProject)
     },[newProject])
@@ -158,7 +155,8 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             ...newProject,
             timeStart : startDateFormat!,
             timeEnd : endDateFormat!,
-            users: [...selectedMembers!]
+            users: [...selectedMembers!],
+            // tasks: [taskData.tasks[0]],
         })
         try {
             await authRequest.post(`/api/services/app/Project/Save`,newProject)
@@ -174,8 +172,12 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     }
     const taskData = useSelector(taskSelector)
     useEffect(() => {
-        console.log('taskData', taskData)
-    },[taskData])
+        setNewProject({
+            ...newProject, tasks: [...taskData.tasks]
+        })
+        console.log('taskData.tasks[0]', taskData.tasks[0])
+    },[taskData.tasks])
+
     return( 
         <div className='new-project'>
             <Button variant="contained" color='primary' onClick={handleClickOpen}>
@@ -224,13 +226,16 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <TextField
                                     name='name'
                                     label="Project Name"
-                                    value={newProject.name}
+                                    value={
+                                        // projectName
+                                      newProject.name
+                                    }
                                     onChange={(e) => {
                                         setNewProject({
                                             ...newProject,
                                             [e.target.name]: e.target.value,
-                                            
                                         })
+                                        // setProjectName(e.target.value)
                                     }}
                                     />
                                 <h4 style={{margin: '10px 0px'}}>Project Code*</h4>

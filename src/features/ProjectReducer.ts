@@ -15,9 +15,8 @@ const TaskSlice = createSlice({
     reducers:{
         taskAdded:(state, action) =>{
             console.log('action.payload', action.payload)
-            state.tasks = [
-                ...state.tasks, 
-                {taskId: action.payload.taskId, billable: action.payload.billable}]
+            // state.tasks.push(action.payload)
+            state.tasks = [action.payload]
         }
     }
 })

@@ -59,10 +59,12 @@ export default function Tasks(){
         }
         // add taskForm
         if (!taskForm) {
-        setTaskForm([{ taskId: task.id, billable: false }]);
+            setTaskForm([{ taskId: task.id, billable: false }]);
         } else {
-        setTaskForm([...taskForm!, { taskId: task.id, billable: false }]);
+            setTaskForm([...taskForm!, { taskId: task.id, billable: false }]);
+            
         }
+        dispatch(taskAdded({ taskId: task.id, billable: false }))
         // -------remove task in task list---------
         const taskId = tasks.indexOf(task)            
         if(taskId > -1) {
@@ -87,12 +89,13 @@ export default function Tasks(){
         setTaskForm(
         mergeObjectTaskForm(taskForm!)({ taskId, billable: e.target.checked })
         );
-        
+        dispatch(taskAdded({ taskId, billable: e.target.checked }))
     };
     React.useEffect(() => {
         dispatch(taskAdded(taskForm))
         console.log('taskForm', taskForm)
     },[taskForm])
+
     React.useEffect(() => {
         setTasksCpn(tasks);
     }, [tasks]);
