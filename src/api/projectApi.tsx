@@ -1,3 +1,1 @@
-export default function(){
-    
-}
+export const getSingleProjectApi = 'http://dev-api-timesheet.nccsoft.vn/api/services/app/Project/Get'

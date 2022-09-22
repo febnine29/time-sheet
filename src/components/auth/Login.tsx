@@ -18,7 +18,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
     const [token, setToken] = useState('')
     const navigate = useNavigate()
     if(isLogin) {
-        return <Navigate to='/Home'/>
+        return <Navigate to='/home'/>
     }
     
     const toggleShow = () => {
@@ -39,7 +39,7 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
         .then(res => {
             if(res){
                 setIsLogin(true);
-                navigate("/Home")
+                navigate("/home")
             }
         })   
         .catch(error => {
@@ -53,8 +53,6 @@ export default function Login({setIsLogin, isLogin}: LoginProps){
         })
         
     }
-    
-    
     return(
         
         <div className='Login'>

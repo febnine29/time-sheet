@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {useSelector} from 'react-redux';
-import { taskSelector } from '../../features/ProjectReducer';
+import { taskSelector } from '../../features/TasksReducer';
 import Tasks from './NewProjectSlice/Tasks'
 import {useEffect, useCallback} from 'react';
 import {authRequest} from '../../api/baseUrl';
-import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {useForm,SubmitHandler, FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -12,13 +12,11 @@ import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import NativeSelect from '@mui/material/NativeSelect';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
@@ -38,7 +36,6 @@ deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
 TaskFormNewProject } from '../../tscript/Project';
-import useDebounce from '../project/useDebounce'
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
@@ -69,28 +66,25 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     };
     const [startDate, setStartDate] = React.useState<Date | null>(null);
     const [endDate, setEndDate] = React.useState<Date | null>(null);
-    const formatStartDate = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-    const formatEndDate = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
-        name: "ASDVXZBNXs",
-        code: "VXCXCZXX",
+        name: "",
+        code: "",
         timeStart: "",
         timeEnd: "",
-        note: "none",
+        note: "",
         projectType: 1,
         projectTargetUsers: [],
-        customerId: 10111,
+        customerId: 0,
         isAllUserBelongTo: false,
         tasks: [{
-            taskId: 520,
+            taskId: 0,
             billable: true
         }],
         users: [{
             userId: 0,
             type: 0  
         }]
-        
     })
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
@@ -148,16 +142,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     }
     
     // -------------SUBMIT-------------
+    const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    
     const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
-        const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-        const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-        setNewProject({
-            ...newProject,
-            timeStart : startDateFormat!,
-            timeEnd : endDateFormat!,
-            users: [...selectedMembers!],
-            // tasks: [taskData.tasks[0]],
-        })
         try {
             await authRequest.post(`/api/services/app/Project/Save`,newProject)
             .then(response => {
@@ -169,13 +157,17 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         }
         setOpen(false)
         setRender(false)
+        
     }
     const taskData = useSelector(taskSelector)
     useEffect(() => {
         setNewProject({
-            ...newProject, tasks: [...taskData.tasks]
+            ...newProject, 
+            tasks: taskData.tasks,
+            timeStart: startDateFormat!,
+            timeEnd: endDateFormat!,
+            users: selectedMembers!,
         })
-        console.log('taskData.tasks[0]', taskData.tasks[0])
     },[taskData.tasks])
 
     return( 
@@ -184,10 +176,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                 Create Project
             </Button>
             <Dialog 
-            // fullWidth={fullWidth}
-            sx={{height: '100vh'}}
-            maxWidth={maxWidth}
-            open={open} onClose={handleClose}>
+                sx={{height: '100vh'}}
+                maxWidth={maxWidth}
+                open={open} onClose={handleClose}>
                 <DialogTitle>Create New Project </DialogTitle>      
                 <DialogContent >
                     <div className="splide__progress">

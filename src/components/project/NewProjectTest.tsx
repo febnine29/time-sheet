@@ -1,23 +1,25 @@
 import * as React from 'react';
+import {useSelector} from 'react-redux';
+import { taskSelector } from '../../features/TasksReducer';
+import Tasks from './NewProjectSlice/Tasks'
 import {useEffect, useCallback} from 'react';
 import {authRequest} from '../../api/baseUrl';
-import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {useForm,SubmitHandler, FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import NativeSelect from '@mui/material/NativeSelect';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleIcon from '@mui/icons-material/Add';
-import RemoveCircleIcon from '@mui/icons-material/Remove';
+import CloseIcon from '@mui/icons-material/Close';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker}  from '@mui/x-date-pickers/DatePicker';
@@ -25,9 +27,7 @@ import {
     checkBranch, 
     checkTypeMember,
     UserNotPagging, 
-    DataFilterUser,
     Customer,
-    getObjectById,
     mergeObjectUserForm,
     mergeObjectById,
     UserFormNewProject,
@@ -36,14 +36,12 @@ deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
 TaskFormNewProject } from '../../tscript/Project';
-
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
 import '../../css/NewProject.css'
 // ------------IMPORT DAYJS-------------
 import dayjs from 'dayjs';
-import { isTemplateExpression } from 'typescript';
 
 export interface GeneralProps{
     customer: Customer[] | null;
@@ -54,12 +52,9 @@ export interface TeamProps{
     userDefaultValues?: UserFormNewProject[];
     setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
 }
-interface MembersPayload{
-    userId: number;
-    type: number
-}
 export default function NewProject({customer}:GeneralProps, {users, setUsers}:TeamProps){
     // --------MUI DIALOG-----------
+    console.log('render 1')
     const [open, setOpen] = React.useState(false);
     const [fullWidth, setFullWidth] = React.useState(true);
     const [maxWidth, setMaxWidth] = React.useState<DialogProps['maxWidth']>('lg');
@@ -67,33 +62,32 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         setOpen(true);
     };
     const handleClose = () => {
+        setRender(false)
         setOpen(false);
     };
     const [startDate, setStartDate] = React.useState<Date | null>(null);
     const [endDate, setEndDate] = React.useState<Date | null>(null);
-    const formatStartDate = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
-    const formatEndDate = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ssZ[Z]')
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
-        name: "ASDVXZBNXs",
-        code: "VXCXCZXX",
+        name: "",
+        code: "",
         timeStart: "",
         timeEnd: "",
-        note: "none",
+        note: "",
         projectType: 1,
         projectTargetUsers: [],
-        customerId: 10111,
+        customerId: 0,
         isAllUserBelongTo: false,
         tasks: [{
-            taskId: 520,
+            taskId: 0,
             billable: true
         }],
         users: [{
             userId: 0,
             type: 0  
         }]
-        
     })
+    const { register, handleSubmit} = useForm()
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
     const [selectedMembers, setSelectedMembers] = React.useState<UserFormNewProject[] | null>(null);
@@ -104,7 +98,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             setMembers(response.data.result)
         }) 
     }
-
+    const [render, setRender] = React.useState(false)
+    const handleRenderMembers = () => {
+        setRender(true)
+    }
     const handleAddMember = (item: UserNotPagging) => {
         if(!arraySelected){
             setArraySelected([item])
@@ -112,7 +109,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             setArraySelected([...arraySelected, item])
         }
         if (!selectedMembers) {
-            console.log("set");
             setSelectedMembers([{ userId: item.id, type: 1 }]);
         } else {
             setSelectedMembers([...selectedMembers!, { userId: item.id, type: 0 }]);
@@ -132,10 +128,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         )
     };
 
-    useEffect(() => {
-        console.log('selectedMembers', selectedMembers)
-    }, [selectedMembers])
-
     useEffect(() =>{
         console.log('new project', newProject)
     },[newProject])
@@ -152,15 +144,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     }
     
     // -------------SUBMIT-------------
+    const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    
     const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
-        const startDateFormat = dayjs(startDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-        const endDateFormat = dayjs(endDate).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
-        setNewProject({
-            ...newProject,
-            timeStart : startDateFormat!,
-            timeEnd : endDateFormat!,
-            users: [...selectedMembers!]
-        })
         try {
             await authRequest.post(`/api/services/app/Project/Save`,newProject)
             .then(response => {
@@ -170,19 +157,33 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         catch (error) {
             console.log(error)
         }
-        console.log('newProject', newProject)
+        setOpen(false)
+        setRender(false)
+        
     }
-    
+    const onSubmit: SubmitHandler<PayLoadNewProject> = data => {
+
+    }
+    const taskData = useSelector(taskSelector)
+    useEffect(() => {
+        setNewProject({
+            ...newProject, 
+            tasks: taskData.tasks,
+            timeStart: startDateFormat!,
+            timeEnd: endDateFormat!,
+            users: selectedMembers!,
+        })
+    },[taskData.tasks])
+
     return( 
         <div className='new-project'>
             <Button variant="contained" color='primary' onClick={handleClickOpen}>
-                Create New Project
+                Create Project
             </Button>
             <Dialog 
-            // fullWidth={fullWidth}
-            sx={{height: '100vh'}}
-            maxWidth={maxWidth}
-            open={open} onClose={handleClose}>
+                sx={{height: '100vh'}}
+                maxWidth={maxWidth}
+                open={open} onClose={handleClose}>
                 <DialogTitle>Create New Project </DialogTitle>      
                 <DialogContent >
                     <div className="splide__progress">
@@ -206,6 +207,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 id="demo-simple-select"
                                 value={newProject.customerId}
                                 label="Client"
+                                
                                 onChange={(e) => {
                                     setNewProject({...newProject, customerId: +e.target.value})
                                 }}
@@ -219,15 +221,18 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 </Select>
                                 <h4 style={{margin: '10px 0px'}}>Project Name*</h4>
                                 <TextField
-                                    name='name'
+                                    
                                     label="Project Name"
-                                    value={newProject.name}
+                                    value={
+                                      newProject.name
+                                    }
+                                    {...register('projectName')}
                                     onChange={(e) => {
                                         setNewProject({
                                             ...newProject,
                                             [e.target.name]: e.target.value,
-                                            
                                         })
+                                        // setProjectName(e.target.value)
                                     }}
                                     />
                                 <h4 style={{margin: '10px 0px'}}>Project Code*</h4>
@@ -296,19 +301,18 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                     <MenuItem value={3}>ODC</MenuItem>
                                 </Select>
                                 </FormControl>
-                                <button onClick={(e) => handleSubmitProject(e as any)}>Save</button>
                             </FormControl>
                         </Box>
                     </SplideSlide>
                     <SplideSlide>
                         <div className="selected-list">
-                            <h3 style={{margin: '10px 0px'}}>Team Members</h3>
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid lightGrey'}}>Team Members</h3>
                             {mergeObjectById(arraySelected!)(selectedMembers!)?.map((item, index) => (
                                 <Box sx={{ display: 'flex', alignItems: 'center', height: '50px' }} 
                                 key={index}
                                 >
                                     <IconButton onClick={() => handleRemove(item)} color='error'>
-                                        <RemoveCircleIcon sx={{fontSize: '30px'}} />
+                                        <CloseIcon sx={{fontSize: '26px'}} />
                                     </IconButton>
                                     <h4 style={{marginRight: '50px'}}>{item.name}</h4>
                                     <FormControl variant='standard'>
@@ -330,9 +334,13 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                             
                         </div>
                         <div className="members-list">
-                            <h3 style={{margin: '10px 0px'}}>Members List</h3>
+                            <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid lightGrey'}}>Members List</h3>
                             <ul>
-                                {members?.map((item) => (
+                                <Button onClick={handleRenderMembers} >
+                                    <PeopleAltIcon />
+                                    <span style={{fontSize: '16px', marginLeft: '10px', textTransform: 'capitalize'}}>Show Members</span>
+                                </Button>
+                                {render ? members?.map((item) => (
                                     <li key={item.id} style={{margin: '10px 0px', display: 'flex'}}>
                                         <IconButton onClick={() => handleAddMember(item)}color='primary' style={{marginRight: '15px'}}>
                                             <AddCircleIcon sx={{fontSize: '30px'}}/>
@@ -349,13 +357,14 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                             <div><em>{item.emailAddress}</em></div>
                                         </div>
                                     </li>
-                                ))}
+                                )) : ''}
                             </ul>
                         </div>
                     </SplideSlide>
-                    <SplideSlide>test3</SplideSlide>
+                    <SplideSlide>
+                        <Tasks />
+                    </SplideSlide>
                     </SplideTrack>
-                    
                     </Splide>
                 </DialogContent>
                 <DialogActions>

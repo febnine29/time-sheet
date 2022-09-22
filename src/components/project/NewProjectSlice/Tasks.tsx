@@ -6,7 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import AddCircleIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import {useDispatch, useSelector} from 'react-redux';
-import {taskAdded} from '../../../features/ProjectReducer'
+import {taskAdded} from '../../../features/TasksReducer';
+import {tasksAdded} from '../../../features/ProjectReducer'
 import {
     deleteArrInArrByIdTask,
     deleteArrRemoveTaskForm,
@@ -93,7 +94,7 @@ export default function Tasks(){
     };
     React.useEffect(() => {
         dispatch(taskAdded(taskForm))
-        console.log('taskForm', taskForm)
+        dispatch(tasksAdded(taskForm))
     },[taskForm])
 
     React.useEffect(() => {

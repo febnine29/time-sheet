@@ -61,7 +61,7 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
             variant="h6"
             noWrap
             component="a"
-            href="/Home"
+            href="/home"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -111,9 +111,9 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
               ))} */}
                 <MenuItem  onClick={handleCloseNavMenu}>
                   <Typography textAlign="left" sx={{display: 'flex', flexDirection: 'column'}}>
-                    <Button><Link className='alink' to='/Home'>Home</Link></Button> 
-                    <Button><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
-                    <Button><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
+                    <Button><Link className='alink' to='/home'>Home</Link></Button> 
+                    <Button><Link className='alink' to='/home/task-manager'>Task Manager</Link></Button>
+                    <Button><Link className='alink' to='/home/project-manager'>Project Manager</Link></Button> 
                   </Typography>
                 </MenuItem>
             </Menu>
@@ -149,9 +149,9 @@ function ResponsiveAppBar({setIsLogin, isLogin}:LogoutProps) {
                   {page}
                 </Button>
             ))} */}
-            <Button className='homeBtn'><Link className='alink' to='/Home'>Home</Link></Button> 
-            <Button className='taskBtn'><Link className='alink' to='/Home/TaskManager'>Task Manager</Link></Button>
-            <Button className='projectBtn'><Link className='alink' to='/Home/ProjectManager'>Project Manager</Link></Button> 
+            <Button className='homeBtn'><Link className='alink' to='/home'>Home</Link></Button> 
+            <Button className='taskBtn'><Link className='alink' to='/home/task-manager'>Task Manager</Link></Button>
+            <Button className='projectBtn'><Link className='alink' to='/home/project-manager'>Project Manager</Link></Button> 
             </div>
           </Box>
 

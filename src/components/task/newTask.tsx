@@ -15,13 +15,13 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import { useForm, SubmitHandler } from "react-hook-form";
 // -------typescrip import--------
 import {dataTaskForm} from '../../tscript/Task'
 
 interface arrayProps{
     title: any[],
     setTitle: (arg:any[]) => void,
-    // taskEdit: dataTaskForm | null
     
 } 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
@@ -63,31 +63,22 @@ export default function NewTask({title, setTitle}:arrayProps) {
                 
             })
     }
-    // const [taskEdit, setTaskEdit] = useState<dataTaskForm | null>(null);
-    // const handleClickEdit = (task: dataTaskForm) => {
-    //     setTaskEdit(task);
-    //     setOpen(true);
-    //   };
     const handleClickOpen = () => {
         setOpen(true);
     };
-
     const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
         if (reason !== 'backdropClick') {
         setOpen(false);
         }
     };
-
     return (
         <div>
-        <Button onClick={handleClickOpen} variant='outlined'>+ ADD NEW TASK</Button>
-        <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-
+        <Button onClick={handleClickOpen} variant='contained'>+ ADD NEW TASK</Button>
+        <Dialog disableEscapeKeyDown open={open} onClose={handleClose} style={{width: '500px', height: '500px'}}>
             <DialogTitle>Add New Task</DialogTitle>
             <DialogContent>
             <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    
                     <TextField
                         autoFocus
                         variant='outlined'
@@ -120,7 +111,6 @@ export default function NewTask({title, setTitle}:arrayProps) {
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleSubmitTask}>Add</Button>
             </DialogActions>
-           
         </Dialog>
         <div>
         {success ? <Snackbar open={success} autoHideDuration={2000} onClose={handleCloseAlert} >

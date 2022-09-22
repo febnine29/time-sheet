@@ -1,11 +1,14 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
+import taskReducer from '../features/TasksReducer'
+import editDataReducer from '../features/DataEditReducer'
 import projectReducer from '../features/ProjectReducer'
-
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    task: projectReducer
+    task: taskReducer,
+    project: projectReducer,
+    editProject: editDataReducer
   },
 });
 

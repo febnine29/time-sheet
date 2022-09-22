@@ -5,17 +5,19 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
-import {PayLoadNewProject} from '../tscript/Project';
+import {PayLoadNewProject} from '../../tscript/Project';
 import {useSelector} from 'react-redux'
-import {taskSelector } from '../features/TasksReducer'
+import {taskSelector } from '../../features/TasksReducer'
 
 
-export default function DashBoard() {
+export default function TestPage() {
   const onSubmit: SubmitHandler<PayLoadNewProject> = data => console.log(data);
-  const testData = useSelector(taskSelector)
-  console.log('data', testData.tasks)
-  
-  const { register, handleSubmit } = useForm<PayLoadNewProject>({
+  const taskData = useSelector(taskSelector)
+  React.useEffect(() => {
+    console.log('data', taskData.tasks)
+
+  },[taskData.tasks])
+  const { register, handleSubmit, setValue } = useForm<PayLoadNewProject>({
     defaultValues: {
       name: "",
       code: "",
@@ -30,8 +32,6 @@ export default function DashBoard() {
       users: []
       }
   });
-  const [task, setTask] = React.useState([] as any)
-  const projectName = React.useRef()
   return (
     <Box
     component="form"

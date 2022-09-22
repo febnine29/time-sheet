@@ -9,12 +9,11 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ProjectManager from './pages/ProjectManager';
 import TaskManager from './pages/TaskManager';
-import TestPage from './pages/TestPage';
+import TestPage from './components/project/TestPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import useToken from './components/auth/useToken'
 import { LoginData } from './tscript/Auth';
 import setToken, { getToken} from './components/common/Common';
-import {dataTaskForm} from './tscript/Task'
 <link
   rel="stylesheet"
   href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -47,7 +46,9 @@ function App() {
 
   if (authLoading && getToken() && !isLogin) {
     return (
-      <div className="content">Checking Authentication...</div>
+      <div className="content" style={{width: '60vw', height: '20vh', margin: '30vh auto', fontSize: '30px', fontWeight: 'bold', textAlign: 'center'}}>
+        Checking Authentication...
+      </div>
     ) 
   }
 
@@ -55,38 +56,34 @@ function App() {
     <div className="App">
       <Routes>
         <Route path='/' element={<Login setIsLogin={setIsLogin} isLogin={isLogin} />}></Route>
-        <Route path='Home'
+        <Route path='home'
           element={
             <ProtectedRoute isLogin={isLogin}> 
               <Home isLogin={isLogin} setIsLogin={setIsLogin}/>
-              
             </ProtectedRoute> 
           }> 
           
         </Route>
         <Route 
-          path='Home/Profile' 
+          path='home/profile' 
           element={
             <ProtectedRoute isLogin={isLogin}>
-              
               <Profile isLogin={isLogin} setIsLogin={setIsLogin}/>
             </ProtectedRoute>
           }
         />
         <Route 
-          path='Home/TaskManager' 
+          path='home/task-manager' 
           element={
             <ProtectedRoute isLogin={isLogin}>
-              
               <TaskManager isLogin={isLogin} setIsLogin={setIsLogin}/>
             </ProtectedRoute>
           }
         />
         <Route 
-          path='Home/ProjectManager' 
+          path='home/project-manager' 
           element={
             <ProtectedRoute isLogin={isLogin}>
-              
               <ProjectManager isLogin={isLogin} setIsLogin={setIsLogin}/>
             </ProtectedRoute>
           }
@@ -98,9 +95,8 @@ function App() {
             </ProtectedRoute> 
           }> 
         </Route>
-        <Route path='/TestPage' element={<TestPage />}></Route>
+        <Route path='/test-page' element={<TestPage />}></Route>
       </Routes>
-     
     </div>
   );
 }
