@@ -12,8 +12,11 @@ import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import FormControl from '@mui/material/FormControl';import Input from '@mui/material/Input';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import {getAllTask} from '../tscript/Task';
@@ -58,6 +61,13 @@ function TaskManager({
     },[])
     // -------OPEN DIALOG-------
     const [open, setOpen] = React.useState(false);
+    const [confirm, setConfirm] = React.useState(false);
+    const handleModal = (index: number) => {
+        setConfirm(true)
+    }
+    const handleClickClose = () => {
+        setConfirm(false)
+    }
     const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
         if (reason !== 'backdropClick') {
         setOpen(false);
@@ -93,7 +103,7 @@ function TaskManager({
     
     // ---------HANDLE--------
     const handleSubmitEdit = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
-        console.log('data edit', dataEdit);
+    
         await getAllTask.post(`/api/services/app/Task/Save`, dataEdit)
             .then(response =>{
                 setSuccess(true)
@@ -108,7 +118,6 @@ function TaskManager({
                 setTitle(response.data.result)
                 console.log('set new task')
             })
-            
     }
     const handleClickEdit = (data: dataTaskForm) => {
         setTaskEdit(data);
@@ -158,7 +167,6 @@ function TaskManager({
     }
 
     return (
-    //    <StateContext.Provider value={title}>
         
         <Box className="TaskManager navbar" sx={{ flexGrow: 1 }}>
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
@@ -175,6 +183,7 @@ function TaskManager({
                     
                     <div className='data-task'>
                     <ul style={{listStyleType: 'none', padding:'20px'}}>
+                    
                     {commonTasks.map((data:any, index:number) => (
                         <li key={index}>
                             <div className='overflowTitle' style={{width:'50%', marginRight:'auto', display:'inline-block', textAlign:'left'}}>
@@ -207,7 +216,6 @@ function TaskManager({
                 <Grid item xs={4} md={8}>
                 <h1 style={{margin: '0', padding: '20px 0px', background: 'white', borderRadius: '20px 20px 0px 0px' }}>Other Tasks</h1>
                 <Item className='otherTasks' style={{borderRadius: '0px 0px 20px 20px'}}>
-                    
                     <ul style={{listStyleType: 'none', padding:'20px'}}>
                         {otherTasks.map((data:any, index:number) => (
                         <li key={index}>
@@ -217,7 +225,6 @@ function TaskManager({
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group">
-
                                 {data.isDeleted ? (
                                         <Button onClick={() => deArchiveTask(data.id)}>UnArchive</Button>
                                         ) : (
@@ -240,7 +247,6 @@ function TaskManager({
                 </Grid>
                 </Grid>
             </Grid>
-            
             <div>
             
             {/* --------------TASK EDIT DIALOG------------- */}
@@ -249,7 +255,6 @@ function TaskManager({
             <DialogContent>
             <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    
                     <TextField
                         autoFocus
                         variant='outlined'
@@ -262,9 +267,7 @@ function TaskManager({
                             [e.target.name]: e.target.value,
                         })
                         }
-                        
                     />
-                    
                     <span style={{textAlign: 'left', margin: '15px 0px 10px 0px'}}>Select task type</span>
                     <Select
                         autoWidth
@@ -284,7 +287,6 @@ function TaskManager({
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleSubmitEdit}>Save Task</Button>
             </DialogActions>
-           
         </Dialog>
             </div>
             {/* ---------------ALERT NOTIFICATION---------- */}
