@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useSelector} from 'react-redux';
 import { taskSelector } from '../../features/TasksReducer';
 import Tasks from './NewProjectSlice/Tasks'
-import {useEffect, useCallback} from 'react';
+import {useEffect, useCallback,useState} from 'react';
 import {authRequest} from '../../api/baseUrl';
 import {useForm,SubmitHandler, FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
@@ -23,11 +23,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import  { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker}  from '@mui/x-date-pickers/DatePicker';
+import useDebounce from '../../components/project/useDebounce';
 import {
     checkBranch, 
     checkTypeMember,
     UserNotPagging, 
     Customer,
+    DataFilterUser,
+    dataBranch,
+    dataTypeUser,
+    dataLevel,
     mergeObjectUserForm,
     mergeObjectById,
     UserFormNewProject,
@@ -87,17 +92,23 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         }]
     })
     // --------------TEAM TAB CONFIG--------------
+    const [dataFilter, setDataFilter] = useState<DataFilterUser>({
+        branch: { index: -1 },
+        type: { index: -1 },
+        level: { index: -1 },
+        name: { nameString: "" },
+      });
     const [members, setMembers] = React.useState([] as any[])
     const [selectedMembers, setSelectedMembers] = React.useState<UserFormNewProject[] | null>(null);
     const [arraySelected, setArraySelected] = React.useState<UserNotPagging[] | null>(null)
-    const getAllMembers = async () => {
+    
+    const [render, setRender] = React.useState(false)
+    const handleRenderMembers = async () => {
         await authRequest.get(`/api/services/app/User/GetUserNotPagging`)
         .then(response => {
             setMembers(response.data.result)
         }) 
-    }
-    const [render, setRender] = React.useState(false)
-    const handleRenderMembers = () => {
+        console.log('getuser')
         setRender(true)
     }
     const handleAddMember = (item: UserNotPagging) => {
@@ -130,9 +141,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         console.log('new project', newProject)
     },[newProject])
 
-    useEffect(() => { 
-        getAllMembers()
-    },[])
     const handleRemove = (item: UserNotPagging) => {
         setArraySelected(
             deleteArrInArrById(arraySelected as UserNotPagging[], [item])!);
@@ -169,7 +177,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             users: selectedMembers!,
         })
     },[taskData.tasks])
-
+    // useEffect(() => {
+    //     handleRenderMembers()
+    // },[])
     return( 
         <div className='new-project'>
             <Button variant="contained" color='primary' onClick={handleClickOpen}>
@@ -180,7 +190,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                 maxWidth={maxWidth}
                 open={open} onClose={handleClose}>
                 <DialogTitle>Create New Project </DialogTitle>      
-                <DialogContent >
+                <DialogContent sx={{margin: '10px !important',height: '97vh'}}>
                     <div className="splide__progress">
                         <div className="splide__progress__bar" />
                     </div>
@@ -219,7 +229,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                     label="Project Name"
                                     value={
                                         // projectName
-                                      newProject.name
+                                        newProject.name
                                     }
                                     onChange={(e) => {
                                         setNewProject({
@@ -329,13 +339,88 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                         </div>
                         <div className="members-list">
                             <h3 style={{margin: '10px 0px', height:'30px', borderBottom:'1px solid lightGrey'}}>Members List</h3>
+                            <div style={{display: 'flex'}}>
+                                <Box>
+                                <InputLabel >Branch</InputLabel>
+                                <Select
+                                    variant='standard'
+                                    value={dataFilter.branch.index}
+                                    label='Branch'
+                                    onChange={(e) => {
+                                        setDataFilter({
+                                        ...dataFilter,
+                                        branch: { index: +e.target.value },
+                                        });
+                                        setRender(true)
+                                    }}
+                                    >
+                                    <MenuItem value={-1}>All</MenuItem>
+                                    {dataBranch.map((branch, index) => (
+                                        <MenuItem value={branch.branch} key={index}>
+                                        {branch.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                                </Box>
+                                <Box sx={{margin: '0px 15px'}}>
+                                <InputLabel>Type</InputLabel>
+                                <Select
+                                    variant='standard'
+                                    value={dataFilter.type.index}
+                                    onChange={(e) => {
+                                        setDataFilter({
+                                        ...dataFilter,
+                                        type: { index: +e.target.value },
+                                        });
+                                        setRender(true)
+                                    }}
+                                    >
+                                    <MenuItem value={-1}>All</MenuItem>
+                                    {dataTypeUser.map((data, index) => (
+                                        <MenuItem value={data.type} key={index}>
+                                        {data.name}
+                                        </MenuItem>
+                                    ))}
+                                    </Select>
+                                    </Box>
+                                    <Box>
+                                    <InputLabel>Level</InputLabel>
+                                    <Select
+                                    variant='standard'
+                                    value={dataFilter.level.index}
+                                    onChange={(e) => {
+                                        setDataFilter({
+                                        ...dataFilter,
+                                        level: { index: +e.target.value },
+                                        });
+                                        setRender(true)
+                                    }}
+                                    >
+                                    <MenuItem value={-1}>All</MenuItem>
+                                    {dataLevel.map((data, index) => (
+                                        <MenuItem value={data.level} key={index}>
+                                        {data.name}
+                                        </MenuItem>
+                                    ))}
+                                    </Select>
+                                    </Box>
+                                    <Box sx={{marginLeft: '50px'}}>
+                                    <InputLabel>Search by name</InputLabel>
+                                    <TextField variant='standard' onChange={(e) => {
+                                        setDataFilter({
+                                        ...dataFilter,
+                                        name: { nameString: e.target.value },
+                                        });
+                                    }} /></Box>
+                                </div>
                             <ul>
                                 <Button onClick={handleRenderMembers} >
                                     <PeopleAltIcon />
                                     <span style={{fontSize: '16px', marginLeft: '10px', textTransform: 'capitalize'}}>Show Members</span>
                                 </Button>
-                                {render ? members?.map((item) => (
-                                    <li key={item.id} style={{margin: '10px 0px', display: 'flex'}}>
+                                {filterUser(members)(dataFilter.branch.index)(dataFilter.type.index)(
+                                    dataFilter.level.index)(dataFilter.name.nameString)?.map((item, index) => (
+                                    <li key={index} style={{margin: '10px 0px', display: 'flex'}}>
                                         <IconButton onClick={() => handleAddMember(item)}color='primary' style={{marginRight: '15px'}}>
                                             <AddCircleIcon sx={{fontSize: '30px'}}/>
                                         </IconButton>
@@ -348,10 +433,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                             
                                             {checkTypeMember(item.type)? <span style={{background: 'lightSalmon',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>{checkTypeMember(item.type)}</span> : ""}
                                             
-                                            <div><em>{item.emailAddress}</em></div>
                                         </div>
                                     </li>
-                                )) : ''}
+                                )) }
                             </ul>
                         </div>
                     </SplideSlide>

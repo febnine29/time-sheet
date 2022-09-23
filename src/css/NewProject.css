@@ -5,10 +5,10 @@
 .MuiDialog-container{
     margin: auto !important
 }
-.MuiDialog-paper{
+/* .MuiDialog-paper{
     margin: 10px !important;
     height: 97vh;
-}
+} */
 .MuiDialog-container h2{
     text-align: center;
     font-size: 30px;

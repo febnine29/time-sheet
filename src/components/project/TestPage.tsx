@@ -1,54 +1,51 @@
-import * as React from "react";
+import React from "react";
+import ReactDOM from "react-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
+import {dataTaskForm} from '../../tscript/Task'
+import { getAllTask } from '../../tscript/Task';
+
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Input from '@mui/material/Input';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import {PayLoadNewProject} from '../../tscript/Project';
-import {useSelector} from 'react-redux'
-import {taskSelector } from '../../features/TasksReducer'
-
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Button from '@mui/material/Button';
 
 export default function TestPage() {
-  const onSubmit: SubmitHandler<PayLoadNewProject> = data => console.log(data);
-  const taskData = useSelector(taskSelector)
-  React.useEffect(() => {
-    console.log('data', taskData.tasks)
+  const { register, handleSubmit } = useForm<dataTaskForm>();
+  const onSubmit: SubmitHandler<dataTaskForm> = data => {
+    getAllTask.post(`/api/services/app/Task/Save`, data)
+    .then(response =>{
+      console.log(response);
+    })
+  };
 
-  },[taskData.tasks])
-  const { register, handleSubmit, setValue } = useForm<PayLoadNewProject>({
-    defaultValues: {
-      name: "",
-      code: "",
-      timeStart: "",
-      timeEnd: "",
-      note: "",
-      projectType: 1,
-      projectTargetUsers: [],
-      customerId: 0,
-      isAllUserBelongTo: false,
-      tasks: [],
-      users: []
-      }
-  });
   return (
-    <Box
-    component="form"
-    sx={{'& > :not(style)': { m: 1, width: '25ch' },}}
-    autoComplete="off"
-    >                       
-      <TextField  label="Project Name" variant="standard"
+    // <form onSubmit={handleSubmit(onSubmit)}>
+      
+    // <form onSubmit={handleSubmit(onSubmit)}>
+    <FormControl>
+      <TextField
+        autoFocus
+        variant='standard'
+        label='Input task name'
         {...register("name")}
+          
       />
-      <TextField label="Code" variant="standard" 
-        {...register("code")}
-      />
-      <TextField label="Note" variant="standard"
-        {...register("note")}
-      />
-      <Button onClick={handleSubmit(onSubmit)}>submit</Button>
-      </Box>
+      <span style={{textAlign: 'left', margin: '15px 0px 10px 0px'}}>Select task type</span>
+      <Select
+        autoWidth
+        variant="standard"
+        {...register("type")}
+      >
+        <MenuItem  value="0">Common Task</MenuItem>
+        <MenuItem  value="1">Other Task</MenuItem>
+          
+      </Select>
+      <Button onClick={handleSubmit(onSubmit)}>Submit</Button>
+    </FormControl>
+    // </form>
     
   );
 }

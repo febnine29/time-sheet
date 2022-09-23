@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Suspense, lazy} from 'react';
 import {useDispatch,useSelector} from 'react-redux';
+import EditProject from '../components/project/NewProjectSlice/EditProject'
 import dayjs from 'dayjs';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -106,34 +107,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
         e.preventDefault()
         setSearchFilter(e.target.value)
     }
-    const [dataEdit, setDataEdit] = useState<PayLoadNewProject | null>(null)
-    const [editProject, setEditProject] = useState<Partial<PayLoadNewProject>>({
-        name: dataEdit?.name!,
-        code: dataEdit?.code!,
-        timeStart: dataEdit?.timeStart!,
-        timeEnd: dataEdit?.timeEnd!,
-        note: dataEdit?.note,
-        projectType: dataEdit?.projectType!,
-        projectTargetUsers: dataEdit?.projectTargetUsers!,
-        customerId: dataEdit?.customerId!,
-        isAllUserBelongTo: dataEdit?.isAllUserBelongTo!,
-        tasks: dataEdit?.tasks!,
-        users: dataEdit?.users!,
-    })
     const [currentProject, setCurrentProject] = useState<null | number>(null)
-    const handleEdit = (item: any) => {
-        setCurrentProject(item.id)
-    }
-    React.useEffect(() =>{
-        console.log('currentProject', currentProject)
-        if(currentProject){
-            const response = authRequest.get(`${getSingleProjectApi}?input=${currentProject}`)
-            .then(response => {
-                console.log('response.data single', response.data)
-                setDataEdit(response.data)
-            })
-        }
-    },[currentProject])
     return (
         <div className="ProjectManager">
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
@@ -161,7 +135,6 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                             label="Search by client or project name" 
                             variant="outlined" sx={{margin: '10px 0px'}} 
                             onChange={(e) => handleSearchInput(e as any)}
-                            
                             />
                     </FormControl>
                 </Box>
@@ -184,10 +157,9 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                                         <span className='active-status' style={{marginLeft: 'auto'}}>{data.status  ? <span style={{background: 'grey', paddingBottom: '3px'}}>InActive</span> 
                                                             : <span style={{background: '#4CAF50', paddingBottom: '3px'}}>Active</span>}</span>
                                         </span>
-                                        <Button onClick={() => handleEdit(data)}>Edit</Button>
+                                        {/* <EditProject customer={customer} currentProject={currentProject} setCurrentProject={setCurrentProject} /> */}
                                     </div>
                                 ))}
-                           
                             </div>
                         </div>  
                     ) ;

@@ -35,12 +35,11 @@ const ProjectSlice = createSlice({
     name: 'project',
     initialState,
     reducers: {
-        tasksAdded:(state, action)=>{
-            state.project.tasks = action.payload;
-            console.log('state.project', action.payload)
+        editProject: (state, action) => {
+            state.project = action.payload;
         }
     }
 })
-export const {tasksAdded} = ProjectSlice.actions
+export const {editProject} = ProjectSlice.actions
 export const projectSelector = (state: RootState) => state.project
 export default ProjectSlice.reducer

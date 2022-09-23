@@ -74,6 +74,20 @@ export const checkTypeMember = (type: number | null): string => {
   }
   return "";
 };
+interface DataFilterUser {
+  branch: {
+    index: number;
+  };
+  type: {
+    index: number;
+  };
+  level: {
+    index: number;
+  };
+  name: {
+    nameString: string;
+  };
+}
 interface UserNotPagging {
   name: string;
   isActive: boolean;

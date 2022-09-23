@@ -7,7 +7,7 @@ import AddCircleIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import {useDispatch, useSelector} from 'react-redux';
 import {taskAdded} from '../../../features/TasksReducer';
-import {tasksAdded} from '../../../features/ProjectReducer'
+import {editProject} from '../../../features/ProjectReducer'
 import {
     deleteArrInArrByIdTask,
     deleteArrRemoveTaskForm,
@@ -75,7 +75,6 @@ export default function Tasks(){
 
     const handleClickRemoveTask = (task: Task) => {
         setTasksCheck(deleteArrInArrByIdTask(tasksCheck as Task[], [task])!);
-
             if (tasksCpn) {
                 setTasksCpn([...tasksCpn, task]);
             }
@@ -90,11 +89,10 @@ export default function Tasks(){
         setTaskForm(
         mergeObjectTaskForm(taskForm!)({ taskId, billable: e.target.checked })
         );
-        dispatch(taskAdded({ taskId, billable: e.target.checked }))
+        // dispatch(taskAdded({ taskId, billable: e.target.checked }))
     };
     React.useEffect(() => {
         dispatch(taskAdded(taskForm))
-        dispatch(tasksAdded(taskForm))
     },[taskForm])
 
     React.useEffect(() => {
