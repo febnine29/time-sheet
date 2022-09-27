@@ -61,7 +61,7 @@ export default function NewTask({title, setTitle}:arrayProps) {
     };
     return (
         <div>
-        <Button onClick={handleClickOpen} variant='contained'>+ ADD NEW TASK</Button>
+        <Button onClick={handleClickOpen} variant='contained' color='success' sx={{marginTop: '20px'}}>+ ADD NEW TASK</Button>
         <Dialog disableEscapeKeyDown open={open} onClose={handleClose} >
             <DialogTitle>Add New Task</DialogTitle>
             <DialogContent>

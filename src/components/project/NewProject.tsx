@@ -177,12 +177,9 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             users: selectedMembers!,
         })
     },[taskData.tasks])
-    // useEffect(() => {
-    //     handleRenderMembers()
-    // },[])
     return( 
         <div className='new-project'>
-            <Button variant="contained" color='primary' onClick={handleClickOpen}>
+            <Button variant="contained" color='success' onClick={handleClickOpen}>
                 Create Project
             </Button>
             <Dialog 
@@ -227,16 +224,12 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <TextField
                                     name='name'
                                     label="Project Name"
-                                    value={
-                                        // projectName
-                                        newProject.name
-                                    }
+                                    value={newProject.name}
                                     onChange={(e) => {
                                         setNewProject({
                                             ...newProject,
                                             [e.target.name]: e.target.value,
                                         })
-                                        // setProjectName(e.target.value)
                                     }}
                                     />
                                 <h4 style={{margin: '10px 0px'}}>Project Code*</h4>
@@ -432,7 +425,6 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                             
                                             
                                             {checkTypeMember(item.type)? <span style={{background: 'lightSalmon',margin: '0px 3px', padding: '0px 7px 2px 7px', borderRadius: '12px', fontSize: '13px'}}>{checkTypeMember(item.type)}</span> : ""}
-                                            
                                         </div>
                                     </li>
                                 )) }

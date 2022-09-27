@@ -87,15 +87,6 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
     }
     
     const [searchFilter, setSearchFilter] = useState("")
-
-    // const onFocus = () => {
-    //     setFocused(true)
-    // }
-    // const onBlur = () => {
-    //     setFocused(false)
-    // }
-    
-
     // -----------BIND INPUT DATA FOR API-----------
     const valueDebounce = useDebounce<string>(searchFilter, 500);
     useEffect(() => {
@@ -114,7 +105,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
             
             <div className='main-body main-project'>
                 <h1>Project Manager</h1>
-                <NewProject customer={customer} />
+                <NewProject customer={customer}/>
                 {/* <NewProjectTest customer={customer} /> */}
                 <Box sx={{ minWidth: 120 }}>
                     <FormControl fullWidth>
@@ -157,7 +148,7 @@ function ProjectManager({isLogin, setIsLogin}: LogoutProps){
                                         <span className='active-status' style={{marginLeft: 'auto'}}>{data.status  ? <span style={{background: 'grey', paddingBottom: '3px'}}>InActive</span> 
                                                             : <span style={{background: '#4CAF50', paddingBottom: '3px'}}>Active</span>}</span>
                                         </span>
-                                        {/* <EditProject customer={customer} currentProject={currentProject} setCurrentProject={setCurrentProject} /> */}
+                                        <EditProject dataProject={data} customer={customer} currentProject={currentProject} setCurrentProject={setCurrentProject} />
                                     </div>
                                 ))}
                             </div>

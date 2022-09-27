@@ -3,12 +3,15 @@ import counterReducer from '../features/counter/counterSlice';
 import taskReducer from '../features/TasksReducer'
 import editDataReducer from '../features/DataEditReducer'
 import projectReducer from '../features/ProjectReducer'
+import confirmTaskReducer from '../features/ConfirmTask'
+
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
     task: taskReducer,
     project: projectReducer,
-    editProject: editDataReducer
+    editProject: editDataReducer,
+    confirmTask: confirmTaskReducer
   },
 });
 

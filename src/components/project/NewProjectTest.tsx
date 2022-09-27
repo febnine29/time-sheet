@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useSelector} from 'react-redux';
 import { taskSelector } from '../../features/TasksReducer';
 import Tasks from './NewProjectSlice/Tasks'
-import {useEffect, useCallback} from 'react';
+import {useEffect, useCallback,useState} from 'react';
 import {authRequest} from '../../api/baseUrl';
 import {useForm,SubmitHandler, FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import Box from '@mui/material/Box';
@@ -35,16 +35,20 @@ import {
 deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
-TaskFormNewProject } from '../../tscript/Project';
+TaskFormNewProject, Result } from '../../tscript/Project';
+import {getSingleProject} from '../../features/ProjectReducer';
+import {getSingleProjectApi} from '../../api/projectApi'
 // ---------IMPORT SPLIDEJS----------
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import '@splidejs/react-splide/css';
-import '../../css/NewProject.css'
+import '../../../css/NewProject.css'
 // ------------IMPORT DAYJS-------------
 import dayjs from 'dayjs';
 
 export interface GeneralProps{
     customer: Customer[] | null;
+    currentProject: null | number;
+    setCurrentProject: (params: number) => void;
 }
 export interface TeamProps{
     users: UserNotPagging[] | null;
@@ -52,12 +56,11 @@ export interface TeamProps{
     userDefaultValues?: UserFormNewProject[];
     setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
 }
-export default function NewProject({customer}:GeneralProps, {users, setUsers}:TeamProps){
+export default function EditProject({customer, currentProject, setCurrentProject}:GeneralProps){
     // --------MUI DIALOG-----------
-    console.log('render 1')
     const [open, setOpen] = React.useState(false);
-    const [fullWidth, setFullWidth] = React.useState(true);
-    const [maxWidth, setMaxWidth] = React.useState<DialogProps['maxWidth']>('lg');
+    const [fullWidth, setFullWidth] = useState(true);
+    const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('lg');
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -65,41 +68,51 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         setRender(false)
         setOpen(false);
     };
-    const [startDate, setStartDate] = React.useState<Date | null>(null);
+    const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = React.useState<Date | null>(null);
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
-    const [newProject, setNewProject] = React.useState<Partial<PayLoadNewProject>>({
-        name: "",
-        code: "",
-        timeStart: "",
-        timeEnd: "",
-        note: "",
-        projectType: 1,
-        projectTargetUsers: [],
-        customerId: 0,
-        isAllUserBelongTo: false,
-        tasks: [{
-            taskId: 0,
-            billable: true
-        }],
-        users: [{
-            userId: 0,
-            type: 0  
-        }]
+    const [dataEdit, setDataEdit] = useState<PayLoadNewProject | null>(null)
+    const [editProject, setEditProject] = useState<Partial<PayLoadNewProject>>({
+        name: dataEdit?.name!,
+        code: dataEdit?.code!,
+        timeStart: dataEdit?.timeStart!,
+        timeEnd: dataEdit?.timeEnd!,
+        note: dataEdit?.note,
+        projectType: dataEdit?.projectType!,
+        projectTargetUsers: dataEdit?.projectTargetUsers!,
+        customerId: dataEdit?.customerId!,
+        isAllUserBelongTo: dataEdit?.isAllUserBelongTo!,
+        tasks: dataEdit?.tasks!,
+        users: dataEdit?.users!,
     })
-    const { register, handleSubmit} = useForm()
+    
+    const handleEdit = (item: any) => {
+        setCurrentProject(item.id)
+        setOpen(true)
+    }
+    // useEffect(() =>{
+        
+    //     // if(currentProject){
+    //     //     const response = authRequest.get(`${getSingleProjectApi}?input=${currentProject}`)
+    //     //     .then(response => {
+    //     //         console.log('response.data single', response.data)
+    //     //         setDataEdit(response.data)
+    //     //     })
+    //     // }
+    // },[currentProject])
+    console.log('currentProject', currentProject)
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
     const [selectedMembers, setSelectedMembers] = React.useState<UserFormNewProject[] | null>(null);
     const [arraySelected, setArraySelected] = React.useState<UserNotPagging[] | null>(null)
-    const getAllMembers = async () => {
+   
+    const [render, setRender] = React.useState(false)
+    const handleRenderMembers = async () => {
         await authRequest.get(`/api/services/app/User/GetUserNotPagging`)
         .then(response => {
             setMembers(response.data.result)
         }) 
-    }
-    const [render, setRender] = React.useState(false)
-    const handleRenderMembers = () => {
+        console.log('getuser')
         setRender(true)
     }
     const handleAddMember = (item: UserNotPagging) => {
@@ -127,14 +140,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
             mergeObjectUserForm(selectedMembers!)({ userId, type: +e.target.value })
         )
     };
-
-    useEffect(() =>{
-        console.log('new project', newProject)
-    },[newProject])
-
-    useEffect(() => { 
-        getAllMembers()
-    },[])
+   
     const handleRemove = (item: UserNotPagging) => {
         setArraySelected(
             deleteArrInArrById(arraySelected as UserNotPagging[], [item])!);
@@ -149,7 +155,7 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
     
     const handleSubmitProject = async (event: React.SyntheticEvent<unknown>, reason?: string) =>{
         try {
-            await authRequest.post(`/api/services/app/Project/Save`,newProject)
+            await authRequest.post(`/api/services/app/Project/Save`,editProject)
             .then(response => {
                 console.log(response)
             })
@@ -161,13 +167,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
         setRender(false)
         
     }
-    const onSubmit: SubmitHandler<PayLoadNewProject> = data => {
-
-    }
     const taskData = useSelector(taskSelector)
     useEffect(() => {
-        setNewProject({
-            ...newProject, 
+        setEditProject({
+            ...editProject, 
             tasks: taskData.tasks,
             timeStart: startDateFormat!,
             timeEnd: endDateFormat!,
@@ -177,14 +180,14 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
 
     return( 
         <div className='new-project'>
-            <Button variant="contained" color='primary' onClick={handleClickOpen}>
-                Create Project
+            <Button color='primary' onClick={handleEdit}>
+                Edit Project
             </Button>
             <Dialog 
                 sx={{height: '100vh'}}
                 maxWidth={maxWidth}
                 open={open} onClose={handleClose}>
-                <DialogTitle>Create New Project </DialogTitle>      
+                <DialogTitle>Edit Project</DialogTitle>      
                 <DialogContent >
                     <div className="splide__progress">
                         <div className="splide__progress__bar" />
@@ -205,11 +208,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={newProject.customerId}
+                                value={editProject.customerId}
                                 label="Client"
-                                
                                 onChange={(e) => {
-                                    setNewProject({...newProject, customerId: +e.target.value})
+                                    setEditProject({...editProject, customerId: +e.target.value})
                                 }}
                                 >
                                     {customer?.map((item:any) => (
@@ -221,15 +223,14 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 </Select>
                                 <h4 style={{margin: '10px 0px'}}>Project Name*</h4>
                                 <TextField
-                                    
+                                    name='name'
                                     label="Project Name"
                                     value={
-                                      newProject.name
+                                        editProject.name
                                     }
-                                    {...register('projectName')}
                                     onChange={(e) => {
-                                        setNewProject({
-                                            ...newProject,
+                                        setEditProject({
+                                            ...editProject,
                                             [e.target.name]: e.target.value,
                                         })
                                         // setProjectName(e.target.value)
@@ -238,11 +239,11 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <h4 style={{margin: '10px 0px'}}>Project Code*</h4>
                                 <TextField 
                                     label='Project Code'
-                                    value={newProject.code}
+                                    value={editProject.code}
                                     name='code'
                                     onChange={(e) => {
-                                        setNewProject({
-                                            ...newProject,
+                                        setEditProject({
+                                            ...editProject,
                                             [e.target.name]: e.target.value,
                                         })
                                     }}
@@ -275,10 +276,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <TextField 
                                     label='Note'
                                     name='note'
-                                    value={newProject.note}
+                                    value={editProject.note}
                                     onChange={(e) =>
-                                        setNewProject({
-                                            ...newProject,
+                                        setEditProject({
+                                            ...editProject,
                                             [e.target.name]: e.target.value,
                                         })
                                         } 
@@ -289,10 +290,10 @@ export default function NewProject({customer}:GeneralProps, {users, setUsers}:Te
                                 <Select
                                     labelId="demo-select-small"
                                     id="demo-select-small"
-                                    value={newProject.projectType}  
+                                    value={editProject.projectType}  
                                     label="projectType"
                                     onChange={(e) => {
-                                        setNewProject({...newProject, projectType: +e.target.value})
+                                        setEditProject({...editProject, projectType: +e.target.value})
                                     }}
                                 >
                                     <MenuItem value={0}>Time-Materials</MenuItem>

@@ -35,7 +35,7 @@ import {
 deleteArrInArrById,
 deleteArrRemoveUserForm,
 PayLoadNewProject,
-TaskFormNewProject, Result } from '../../../tscript/Project';
+TaskFormNewProject, Result, DataSingleProject } from '../../../tscript/Project';
 import {getSingleProject} from '../../../features/ProjectReducer';
 import {getSingleProjectApi} from '../../../api/projectApi'
 // ---------IMPORT SPLIDEJS----------
@@ -49,6 +49,7 @@ export interface GeneralProps{
     customer: Customer[] | null;
     currentProject: null | number;
     setCurrentProject: (params: number) => void;
+    dataProject: DataSingleProject
 }
 export interface TeamProps{
     users: UserNotPagging[] | null;
@@ -56,50 +57,39 @@ export interface TeamProps{
     userDefaultValues?: UserFormNewProject[];
     setValue: UseFormSetValue<Partial<PayLoadNewProject>>;
 }
-export default function EditProject({customer, currentProject, setCurrentProject}:GeneralProps){
+export default function EditProject({customer, currentProject, setCurrentProject, dataProject}:GeneralProps){
     // --------MUI DIALOG-----------
-    const [open, setOpen] = React.useState(false);
+    const [openEdit, setOpenEdit] = React.useState(false);
     const [fullWidth, setFullWidth] = useState(true);
     const [maxWidth, setMaxWidth] = useState<DialogProps['maxWidth']>('lg');
     const handleClickOpen = () => {
-        setOpen(true);
+        setOpenEdit(true);
     };
     const handleClose = () => {
         setRender(false)
-        setOpen(false);
+        setOpenEdit(false);
     };
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = React.useState<Date | null>(null);
     // -------------GENERAL TAB - NEW PROJECT CONFIG--------------
     const [dataEdit, setDataEdit] = useState<PayLoadNewProject | null>(null)
-    const [editProject, setEditProject] = useState<Partial<PayLoadNewProject>>({
-        name: dataEdit?.name!,
-        code: dataEdit?.code!,
-        timeStart: dataEdit?.timeStart!,
-        timeEnd: dataEdit?.timeEnd!,
-        note: dataEdit?.note,
-        projectType: dataEdit?.projectType!,
-        projectTargetUsers: dataEdit?.projectTargetUsers!,
-        customerId: dataEdit?.customerId!,
-        isAllUserBelongTo: dataEdit?.isAllUserBelongTo!,
-        tasks: dataEdit?.tasks!,
-        users: dataEdit?.users!,
-    })
+    
     
     const handleEdit = (item: any) => {
         setCurrentProject(item.id)
-        setOpen(true)
+        setOpenEdit(true)
     }
-    useEffect(() =>{
-        console.log('currentProject', currentProject)
-        // if(currentProject){
-        //     const response = authRequest.get(`${getSingleProjectApi}?input=${currentProject}`)
-        //     .then(response => {
-        //         console.log('response.data single', response.data)
-        //         setDataEdit(response.data)
-        //     })
-        // }
-    },[currentProject])
+    // useEffect(() =>{
+        
+    //     // if(currentProject){
+    //     //     const response = authRequest.get(`${getSingleProjectApi}?input=${currentProject}`)
+    //     //     .then(response => {
+    //     //         console.log('response.data single', response.data)
+    //     //         setDataEdit(response.data)
+    //     //     })
+    //     // }
+    // },[currentProject])
+    // console.log('currentProject', currentProject)
     
     // --------------TEAM TAB CONFIG--------------
     const [members, setMembers] = React.useState([] as any[])
@@ -163,7 +153,7 @@ export default function EditProject({customer, currentProject, setCurrentProject
         catch (error) {
             console.log(error)
         }
-        setOpen(false)
+        setOpenEdit(false)
         setRender(false)
         
     }
@@ -177,16 +167,46 @@ export default function EditProject({customer, currentProject, setCurrentProject
             users: selectedMembers!,
         })
     },[taskData.tasks])
-
+    useEffect(() => {
+        if(currentProject){
+            authRequest.get(`/api/services/app/Project/Get?input=${currentProject}`)
+            .then(response => {
+                setDataEdit(response.data.result)
+                setEditProject(response.data.result)
+            })
+        }
+    },[openEdit])
+    
+    const [editProject, setEditProject] = useState<Partial<PayLoadNewProject>>({
+        name: dataEdit?.name!,
+        code: dataEdit?.code!,
+        timeStart: dataEdit?.timeStart!,
+        timeEnd: dataEdit?.timeEnd!,
+        note: dataEdit?.note,
+        projectType: dataEdit?.projectType!,
+        projectTargetUsers: dataEdit?.projectTargetUsers!,
+        customerId: dataEdit?.customerId!,
+        isAllUserBelongTo: dataEdit?.isAllUserBelongTo!,
+        tasks: dataEdit?.tasks!,
+        users: dataEdit?.users!,
+    })
+    useEffect(() => {
+        console.log('dateEdit', dataEdit)
+        console.log('editProject', editProject)                          
+    })
+    
     return( 
         <div className='new-project'>
-            <Button color='primary' onClick={handleEdit}>
+            <Button color='primary' onClick={() => {
+                setCurrentProject(dataProject.id);
+                setOpenEdit(true)
+                }}>
                 Edit Project
             </Button>
             <Dialog 
                 sx={{height: '100vh'}}
                 maxWidth={maxWidth}
-                open={open} onClose={handleClose}>
+                open={openEdit} onClose={handleClose}>
                 <DialogTitle>Edit Project</DialogTitle>      
                 <DialogContent >
                     <div className="splide__progress">
@@ -233,7 +253,6 @@ export default function EditProject({customer, currentProject, setCurrentProject
                                             ...editProject,
                                             [e.target.name]: e.target.value,
                                         })
-                                        // setProjectName(e.target.value)
                                     }}
                                     />
                                 <h4 style={{margin: '10px 0px'}}>Project Code*</h4>

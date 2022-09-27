@@ -21,6 +21,8 @@ import FormControl from '@mui/material/FormControl';import Input from '@mui/mate
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import {getAllTask} from '../tscript/Task';
 import {dataTaskForm} from '../tscript/Task';
+import {useSelector, useDispatch} from 'react-redux';
+import { dataTaskConfirm, confirmSelector } from '../features/ConfirmTask';
 // import {handleClickEdit} from '../components/task/NewTask';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
@@ -41,7 +43,6 @@ const Item = styled(Paper)(({ theme }) => ({
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 props,
 ref,
-
 ) {
 return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -56,17 +57,18 @@ function TaskManager({
         getAllTask.get(`/api/services/app/Task/GetAll`)
         .then(response => {
             setTitle(response.data.result);
-            
         })
     },[])
     // -------OPEN DIALOG-------
     const [open, setOpen] = React.useState(false);
-    const [confirm, setConfirm] = React.useState(false);
-    const handleModal = (index: number) => {
+    
+    const handleModal = (data: dataTaskForm) => {
         setConfirm(true)
     }
     const handleClickClose = () => {
         setConfirm(false)
+        setArchived(false);
+        setUnArchived(false);
     }
     const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
         if (reason !== 'backdropClick') {
@@ -103,7 +105,6 @@ function TaskManager({
     
     // ---------HANDLE--------
     const handleSubmitEdit = async (event: React.SyntheticEvent<unknown>, reason?: string) => {
-    
         await getAllTask.post(`/api/services/app/Task/Save`, dataEdit)
             .then(response =>{
                 setSuccess(true)
@@ -122,36 +123,46 @@ function TaskManager({
     const handleClickEdit = (data: dataTaskForm) => {
         setTaskEdit(data);
         setDataEdit(data);
-        console.log('task edit', taskEdit)
         setOpen(true);
     };
-    
-    const handleDelTask = (id:number) => {
-        getAllTask.delete(`/api/services/app/Task/Delete?Id=${id}`)
+
+    // -------------CONFIRM CONFIG---------------
+    const [confirm, setConfirm] = React.useState(false);
+    const [archived, setArchived] = React.useState(false)
+    const [unArchived, setUnArchived] = React.useState(false)
+    const dispatch = useDispatch()
+    const deleteTask = (data: dataTaskForm) => {
+        dispatch(dataTaskConfirm(data))
+        setConfirm(true)
+    }
+    const archiveTask = (data: dataTaskForm) => {
+        dispatch(dataTaskConfirm(data))
+        setArchived(true)
+    }
+    const deArchiveTask = (data: dataTaskForm) => {
+        dispatch(dataTaskConfirm(data))
+        setUnArchived(true)
+    }
+    const getTask = useSelector(confirmSelector)
+    const taskName = getTask.taskConfirm.name
+    const taskId = getTask.taskConfirm.id
+    const id = taskId
+    const confirmDelete = async () => {
+        await getAllTask.delete(`/api/services/app/Task/Delete?Id=${taskId}`)
         .then(response => {
             setDelAlert(true)
-            setTitle(title.filter(item => item.id !== id))
-        })  
-    }
-    const archiveTask = async (id:number) => {
-        await getAllTask.delete(`/api/services/app/Task/Archive?Id=${id}`)
-        .then(response => {
-            if(response.status === 200){
-                setArchive(true)
-            }
-            console.log('archived')
         })
-        .catch(Error => {
+        .catch(error => {
             setError(true)
         })
         getAllTask.get(`/api/services/app/Task/GetAll`)
-            .then(response => {
-                setTitle(response.data.result)
-            })
-            
+        .then(response => {
+            setTitle(response.data.result);
+        })
+        setConfirm(false)
     }
-    const deArchiveTask = async (id:number) => {
-        await getAllTask.post(`/api/services/app/Task/DeArchive`,{id})
+    const confirmArchive = async () => {
+        await getAllTask.delete(`/api/services/app/Task/Archive?Id=${taskId}`)
         .then(response => {
             if(response.status === 200){
                 setDeArchive(true)
@@ -164,10 +175,23 @@ function TaskManager({
             .then(response => {
                 setTitle(response.data.result)
             })
+        setArchived(false)
     }
-
+    const confirmDeArchive = async() => {
+        await getAllTask.post(`/api/services/app/Task/DeArchive`,{id})
+        .then(response => {
+            setDeArchive(true)
+        })
+        .catch(error => {
+            setError(true)
+        })
+        getAllTask.get(`/api/services/app/Task/GetAll`)
+            .then(response => {
+                setTitle(response.data.result)
+            })
+        setUnArchived(false)
+    }
     return (
-        
         <Box className="TaskManager navbar" sx={{ flexGrow: 1 }}>
             <ResponsiveAppbar isLogin={isLogin} setIsLogin={setIsLogin}/>
             <Grid container className='main-body main-task' columns={{ xs: 4, md: 16}} >
@@ -178,7 +202,6 @@ function TaskManager({
                 <Grid container spacing={{ xs: 4, md: 3 }} columns={{ xs: 4, md: 16}}>
                 <Grid item xs={4} md={8}>
                 <h1 style={{margin: '0', padding: '20px 0px', background: 'white', borderRadius: '20px 20px 0px 0px' }}>Common Tasks</h1>
-                <span></span>
                 <Item className='commonTasks' style={{borderRadius: '0px 0px 20px 20px'}}>
                     
                     <div className='data-task'>
@@ -186,27 +209,31 @@ function TaskManager({
                     
                     {commonTasks.map((data:any, index:number) => (
                         <li key={index}>
-                            <div className='overflowTitle' style={{width:'50%', marginRight:'auto', display:'inline-block', textAlign:'left'}}>
+                            <div className='overflowTitle' style={{width:'50%', marginRight:'auto', display:'flex', alignItems: 'center', textAlign:'left'}}>
+                                <Button 
+                                    variant='contained' 
+                                    onClick={() => handleClickEdit(data)} 
+                                    sx={{marginRight: '10px'}}
+                                    >Edit</Button> 
                                 {data.name}
                             </div>
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
-                                <ButtonGroup variant="contained" aria-label="outlined primary button group">
                                     {data.isDeleted ? (
-                                        <Button onClick={() => deArchiveTask(data.id)}>UnArchive</Button>
+                                        <Button variant='contained' color='warning' onClick={() => deArchiveTask(data)}>UnArchive</Button>
                                         ) : (
-                                        <Button onClick={() => archiveTask(data.id)}>Archive</Button>
+                                        <Button variant='contained' color='warning' onClick={() => archiveTask(data)}>Archive</Button>
                                     )}
-                                    <Button onClick={() => handleClickEdit(data)} color="warning">Edit</Button>
                                     <Button 
-                                        onClick={() => handleDelTask(data.id)} 
+                                        variant='contained'
+                                        sx={{marginLeft: '10px'}}
                                         color="error"
+                                        onClick={() => deleteTask(data)}
                                         disabled={!data.isDeleted} 
                                     > Delete </Button>
-                                </ButtonGroup>
                                 </div>
                             </div>
-                            
+
                         </li>
                     ))} 
                     </ul>
@@ -219,27 +246,31 @@ function TaskManager({
                     <ul style={{listStyleType: 'none', padding:'20px'}}>
                         {otherTasks.map((data:any, index:number) => (
                         <li key={index}>
-                            <div style={{width:'50%', marginRight:'auto', display:'inline-block', textAlign:'left'}}>
+                            <div className='overflowTitle' style={{width:'50%', marginRight:'auto', display:'flex', alignItems: 'center', textAlign:'left'}}>
+                                <Button 
+                                    variant='contained' 
+                                    onClick={() => handleClickEdit(data)} 
+                                    sx={{marginRight: '10px'}}
+                                    >Edit</Button> 
                                 {data.name}
-                                </div>
+                            </div>
                             <div style={{width:'50%', marginLeft:'auto', display: 'inline-block'}}>
                                 <div style={{float:'right'}}>
-                                <ButtonGroup variant="contained" aria-label="outlined primary button group">
-                                {data.isDeleted ? (
-                                        <Button onClick={() => deArchiveTask(data.id)}>UnArchive</Button>
+                                    {data.isDeleted ? (
+                                        <Button variant='contained' color='warning' onClick={() => deArchiveTask(data)}>UnArchive</Button>
                                         ) : (
-                                        <Button onClick={() => archiveTask(data.id)}>Archive</Button>
+                                        <Button variant='contained' color='warning' onClick={() => archiveTask(data)}>Archive</Button>
                                     )}
-                                    <Button onClick={() => handleClickEdit(data)} color="warning">Edit</Button>
+                                    
                                     <Button 
-                                        onClick={() => handleDelTask(data.id)} 
+                                        variant='contained'
+                                        sx={{marginLeft: '10px'}}
                                         color="error"
+                                        onClick={() => deleteTask(data)}
                                         disabled={!data.isDeleted} 
                                     > Delete </Button>
-                                </ButtonGroup>
                                 </div>
                             </div>
-                            
                         </li>
                     ))} 
                     </ul>
@@ -247,47 +278,87 @@ function TaskManager({
                 </Grid>
                 </Grid>
             </Grid>
-            <div>
-            
             {/* --------------TASK EDIT DIALOG------------- */}
-            <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+            <div>
+            <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Edit Task</DialogTitle>
             <DialogContent>
-            <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <TextField
-                        autoFocus
-                        variant='outlined'
-                        label='Input task name'
-                        name="name"
-                        value={dataEdit.name}
-                        onChange={(e) =>
-                        setDataEdit({
-                            ...dataEdit,
-                            [e.target.name]: e.target.value,
-                        })
-                        }
-                    />
-                    <span style={{textAlign: 'left', margin: '15px 0px 10px 0px'}}>Select task type</span>
-                    <Select
-                        autoWidth
-                        value={dataEdit.type}
-                        onChange={(e) => {
-                            setDataEdit({...dataEdit,type: +e.target.value})
-                        }}
-                    >
-                        <MenuItem  value={0}>Common Task</MenuItem>
-                        <MenuItem  value={1}>Other Task</MenuItem>
-                        
-                    </Select>
-                </FormControl>
-            </Box>
+                <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <TextField
+                            autoFocus
+                            variant='outlined'
+                            label='Input task name'
+                            name="name"
+                            value={dataEdit.name}
+                            onChange={(e) =>
+                            setDataEdit({
+                                ...dataEdit,
+                                [e.target.name]: e.target.value,
+                            })
+                            }
+                        />
+                        <span style={{textAlign: 'left', margin: '15px 0px 10px 0px'}}>Select task type</span>
+                        <Select
+                            autoWidth
+                            value={dataEdit.type}
+                            onChange={(e) => {
+                                setDataEdit({...dataEdit,type: +e.target.value})
+                            }}
+                        >
+                            <MenuItem  value={0}>Common Task</MenuItem>
+                            <MenuItem  value={1}>Other Task</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Box>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleSubmitEdit}>Save Task</Button>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleSubmitEdit}>Save Task</Button>
             </DialogActions>
-        </Dialog>
+            </Dialog>
+            </div>
+
+            {/* --------------------CONFIRM DIALOG---------------------- */}
+            <div>
+                <Dialog open={confirm} onClose={handleClickClose}>
+                <DialogTitle>Are You Sure?</DialogTitle>
+                <DialogContent>
+                    <em>Delete task: </em> 
+                    <span style={{fontSize: '20px', fontWeight: 'bold'}}>{taskName}</span>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClickClose}>Cancel</Button>
+                    <Button onClick={confirmDelete}>Delete</Button>
+                </DialogActions>
+                </Dialog>
+            </div>
+
+            <div>
+                <Dialog open={archived} onClose={handleClickClose}>
+                <DialogTitle>Are You Sure?</DialogTitle>
+                <DialogContent>
+                    <em>Archive task: </em> 
+                    <span style={{fontSize: '20px', fontWeight: 'bold'}}>{taskName}</span>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClickClose}>Cancel</Button>
+                    <Button onClick={confirmArchive}>Archive</Button>
+                </DialogActions>
+                </Dialog>
+            </div>
+            <div>
+                <Dialog open={unArchived} onClose={handleClickClose}>
+                <DialogTitle>Are You Sure?</DialogTitle>
+                <DialogContent>
+                    <em>UnArchive task: </em> 
+                    <span style={{fontSize: '20px', fontWeight: 'bold'}}>{taskName}</span>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClickClose}>Cancel</Button>
+                    <Button onClick={confirmDeArchive}>UnArchive</Button>
+                </DialogActions>
+                </Dialog>
             </div>
             {/* ---------------ALERT NOTIFICATION---------- */}
             <div>
@@ -323,7 +394,6 @@ function TaskManager({
                         : <></>}
             </div>
         </Box>
-        // </StateContext.Provider>
     )
 }
 export default TaskManager;

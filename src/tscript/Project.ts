@@ -10,6 +10,17 @@ interface AllProjectData {
     timeEnd: string;
     id: number;
 }
+interface DataSingleProject {
+  name: string;
+  code: string;
+  status: number;
+  pms: string[];
+  activeMember: number;
+  projectType: number;
+  timeStart: string;
+  timeEnd: string;
+  id: number;
+}
 interface Result {
     customerName: string;
     data: {
@@ -292,6 +303,7 @@ export type{
   AllProjectData, 
   Result, Customer, 
   UserNotPagging,
+  DataSingleProject,
   UserFormNewProject, 
   DataFilterUser,
 PayLoadNewProject,
